@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
+import { Heart, Smile } from 'lucide-react';
+
 
 const emojis = ['😔', '😕', '😐', '🙂', '😊'];
 
@@ -32,11 +34,13 @@ const emojiIndex = Math.min(Math.floor(moodValue / 25), 4);
 
 return (
 <div className="bg-white rounded-3xl p-6 shadow-sm">
-    <p className="text-xs font-medium text-[#5A4B70] mb-2 uppercase tracking-wide">
-    Mood Check-In
-    </p>
-    <p className="text-[#4A4458] font-medium mb-6">How are you feeling today?</p>
-
+    <div className="flex items-center gap-2 mb-2">
+        <Smile className="w-5 h-5 text-[#C9B6CC]" />
+        <p className="text-xs font-medium text-[#5F5670] uppercase tracking-wide">
+            Mood Check-In
+        </p>
+    </div>
+    <p className="text-[#4A4458] font-medium text-xs mb-6">How are you feeling today?</p>
 
 
     <div className="relative mb-6">
@@ -63,7 +67,7 @@ return (
     </motion.div>
     </div>
 
-    <div className="flex justify-between text-xs text-[#7D7589] mb-4">
+    <div className="flex justify-between text-xs text-[#5A4B70] mb-4">
     <span>Struggling</span>
     <span>Okay</span>
     <span>Great</span>

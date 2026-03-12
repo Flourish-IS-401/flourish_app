@@ -59,7 +59,7 @@ export default function AffirmationCarousel() {
     setCurrentIndex((prev) => (prev === affirmations.length - 1 ? 0 : prev + 1));
     };
 
-    // Save the thumbs up/down
+    // Save the thumbs up/down preference
     const handleReaction = async (type) => {
     const affirmation = affirmations[currentIndex];
     setReactions((prev) => ({
@@ -119,82 +119,84 @@ export default function AffirmationCarousel() {
 
     return (
     <div className="bg-gradient-to-br from-[#E8E4F3] to-[#EDD9E8] rounded-3xl p-6 shadow-sm">
-        <p className="text-xs font-medium text-[#5A4B70] mb-3 uppercase tracking-wide">
+        {/* Title  */}
+        <p className="text-xs font-medium text-[#5A4B70] uppercase tracking-wide">
         Daily Affirmation
         </p>
         
         <div 
-        className="relative h-24 flex items-center justify-center overflow-hidden"
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
+            className="relative h-24 flex items-center justify-center overflow-hidden"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
         >
-        <AnimatePresence mode="wait" custom={direction}>
-            <motion.p
-            key={currentIndex}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="text-xl font-medium text-[#4A4458] text-center leading-relaxed absolute"
-            >
-            "{currentAffirmation.text}"
-            </motion.p>
-        </AnimatePresence>
+            {/* Affirmation Text */}
+            <AnimatePresence mode="wait" custom={direction}>
+                <motion.p
+                    key={currentIndex}
+                    custom={direction}
+                    variants={variants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="text-xl font-medium text-[#4A4458] text-center leading-relaxed absolute"
+                    >
+                "{currentAffirmation.text}"
+                </motion.p>
+            </AnimatePresence>
         </div>
+
 
         <div className="flex items-center justify-between mt-4">
-        <button
-            onClick={handlePrev}
-            className="p-3 rounded-full bg-white/50 hover:bg-white/80 transition-all duration-200 active:scale-95"
-        >
-            <ChevronLeft className="w-5 h-5 text-[#5A4B70]" />
-        </button>
+            {/* Previous Affirmation Button */}
+            <button onClick={handlePrev} className="p-3 rounded-full bg-white/50 hover:bg-white/80 transition-all duration-200 active:scale-95">
+                <ChevronLeft className="w-5 h-5 text-[#5A4B70]" />
+            </button>
 
-        <div className="flex gap-3">
-            <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => handleReaction('up')}
-            className={`p-3 rounded-full transition-all duration-200 ${
-                currentReaction === 'up'
-                ? 'bg-[#5A4B70] text-white'
-                : 'bg-white/50 hover:bg-white/80 text-[#5A4B70]'
-            }`}
-            >
-            <ThumbsUp className="w-5 h-5" />
-            </motion.button>
-            <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => handleReaction('down')}
-            className={`p-3 rounded-full transition-all duration-200 ${
-                currentReaction === 'down'
-                ? 'bg-[#EDD9E8] text-[#5A4B70]'
-                : 'bg-white/50 hover:bg-white/80 text-[#5A4B70]'
-            }`}
-            >
-            <ThumbsDown className="w-5 h-5" />
-            </motion.button>
+            {/* Reaction Buttons */}
+            <div className="flex gap-3">
+                {/* Thumbs Up Button */}
+                <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => handleReaction('up')}
+                    className={`p-3 rounded-full transition-all duration-200 ${
+                        currentReaction === 'up'
+                        ? 'bg-[#5A4B70] text-white'
+                        : 'bg-white/50 hover:bg-white/80 text-[#5A4B70]'
+                    }`}>
+                    <ThumbsUp className="w-5 h-5" />
+                </motion.button>
+                {/* Thumbs Down Button */}
+                <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => handleReaction('down')}
+                    className={`p-3 rounded-full transition-all duration-200 ${
+                        currentReaction === 'down'
+                        ? 'bg-[#5A4B70] text-white'
+                        : 'bg-white/50 hover:bg-white/80 text-[#5A4B70]'
+                    }`}
+                    >
+                    <ThumbsDown className="w-5 h-5" />
+                </motion.button>
+            </div>
+
+            {/* Next Affirmation Button */}
+            <button onClick={handleNext} className="p-3 rounded-full bg-white/50 hover:bg-white/80 transition-all duration-200 active:scale-95">
+                <ChevronRight className="w-5 h-5 text-[#5A4B70]" />
+            </button>
         </div>
 
-        <button
-            onClick={handleNext}
-            className="p-3 rounded-full bg-white/50 hover:bg-white/80 transition-all duration-200 active:scale-95"
-        >
-            <ChevronRight className="w-5 h-5 text-[#5A4B70]" />
-        </button>
-        </div>
-
+        {/* Progress Bar */}
         <div className="flex justify-center gap-1.5 mt-4">
-        {affirmations.map((_, idx) => (
-            <div
-            key={idx}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-                idx === currentIndex ? 'w-6 bg-[#5A4B70]' : 'w-1.5 bg-white/50'
-            }`}
-            />
-        ))}
+            {affirmations.map((_, idx) => (
+                <div
+                key={idx}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                    idx === currentIndex ? 'w-6 bg-[#5A4B70]' : 'w-1.5 bg-white/50'
+                }`}
+                />
+            ))}
         </div>
     </div>
     );

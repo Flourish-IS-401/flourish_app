@@ -72,6 +72,8 @@ return (
         </div>
     </motion.div>
 
+    <br></br>
+
     <motion.p
         key={phase}
         initial={{ opacity: 0, y: 20 }}
