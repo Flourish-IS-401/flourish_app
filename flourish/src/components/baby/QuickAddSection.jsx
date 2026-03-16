@@ -245,7 +245,7 @@ export default function QuickAddSection({ onActivityAdded, editingActivity, onCa
             </div>
 
             <div>
-              <label className="text-sm text-[#7D7589] mb-2 block">Side</label>
+              <p className="text-sm text-[#7D7589] mb-2">Side</p>
               <div className="flex gap-2">
                 {['left', 'right', 'both'].map((side) => (
                   <button
@@ -540,7 +540,7 @@ export default function QuickAddSection({ onActivityAdded, editingActivity, onCa
             </div>
 
             <div>
-              <label className="text-sm text-[#7D7589] mb-2 block">Tags (optional)</label>
+              <p className="text-sm text-[#7D7589] mb-2">Tags (optional)</p>
               <div className="flex flex-wrap gap-2">
                 {['Calm', 'Happy', 'Fussy', 'Crying', 'Sleepy', 'Overtired', 'Hungry', 'Gassy', 'Playful', 'Overstimulated'].map(tag => (
                   <button
