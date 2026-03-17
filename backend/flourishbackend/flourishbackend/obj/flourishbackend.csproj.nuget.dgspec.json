@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/lukecarr/Desktop/Flourish/flourish_app/backend/flourishbackend/flourishbackend/flourishbackend.csproj": {}
+    "/Users/lukecarr/Desktop/Test2/flourish_app/backend/flourishbackend/flourishbackend/flourishbackend.csproj": {}
   },
   "projects": {
-    "/Users/lukecarr/Desktop/Flourish/flourish_app/backend/flourishbackend/flourishbackend/flourishbackend.csproj": {
+    "/Users/lukecarr/Desktop/Test2/flourish_app/backend/flourishbackend/flourishbackend/flourishbackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/lukecarr/Desktop/Flourish/flourish_app/backend/flourishbackend/flourishbackend/flourishbackend.csproj",
+        "projectUniqueName": "/Users/lukecarr/Desktop/Test2/flourish_app/backend/flourishbackend/flourishbackend/flourishbackend.csproj",
         "projectName": "flourishbackend",
-        "projectPath": "/Users/lukecarr/Desktop/Flourish/flourish_app/backend/flourishbackend/flourishbackend/flourishbackend.csproj",
+        "projectPath": "/Users/lukecarr/Desktop/Test2/flourish_app/backend/flourishbackend/flourishbackend/flourishbackend.csproj",
         "packagesPath": "/Users/lukecarr/.nuget/packages/",
-        "outputPath": "/Users/lukecarr/Desktop/Flourish/flourish_app/backend/flourishbackend/flourishbackend/obj/",
+        "outputPath": "/Users/lukecarr/Desktop/Test2/flourish_app/backend/flourishbackend/flourishbackend/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/lukecarr/.nuget/NuGet/NuGet.Config"

@@ -5,7 +5,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.SnakeCaseLower;
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -18,13 +23,22 @@ builder.Services.AddCors();
 
 var app = builder.Build();
 
+// Auto-create the database and tables on startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<FlourishDbContext>();
+    db.Database.EnsureCreated();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseCors(x => x.WithOrigins("http://localhost:3000"));
+app.UseCors(x => x.WithOrigins("http://localhost:3000")
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
 app.UseHttpsRedirection();
 
@@ -33,3 +47,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

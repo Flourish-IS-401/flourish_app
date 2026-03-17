@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using flourishbackend.Data;
 
@@ -12,6 +12,12 @@ namespace flourishbackend.Controllers
 
         public FlourishController(FlourishDbContext temp) {
             _context = temp;
+        }
+
+        [HttpGet("test")]
+        public IActionResult Test()
+        {
+            return Ok(new { message = "The backend is working perfectly!" });
         }
     }
 }
