@@ -50,7 +50,7 @@
 import ArticleView from './pages/ArticleView.jsx';
 import Baby from './pages/Baby.jsx';
 import Calendar from './pages/Calendar.jsx';
-import CalendarDayDetail from './pages/CalendarDayDetail.jsx';
+// import CalendarDayDetail from './pages/CalendarDayDetail.jsx';
 import Home from './pages/Home.jsx';
 import Journal from './pages/Journal.jsx';
 import LiveMeditation from './pages/LiveMeditation.jsx';
@@ -68,7 +68,7 @@ export const PAGES = {
     "ArticleView": ArticleView,
     "Baby": Baby,
     "Calendar": Calendar,
-    "CalendarDayDetail": CalendarDayDetail,
+    // "CalendarDayDetail": CalendarDayDetail,
     "Home": Home,
     "Journal": Journal,
     "LiveMeditation": LiveMeditation,

@@ -32,7 +32,7 @@ return (
     
     <div className="space-y-4">
         <div>
-        <Label className="text-sm text-[#7D7589] mb-1.5">Full Name</Label>
+        <Label className="text-sm text-[#5A4B70] mb-1.5">Full Name</Label>
         <Input 
             value={user?.full_name || ''} 
             disabled
@@ -41,7 +41,7 @@ return (
         </div>
         
         <div>
-        <Label className="text-sm text-[#7D7589] mb-1.5">Email</Label>
+        <Label className="text-sm text-[#5A4B70] mb-1.5">Email</Label>
         <Input 
             value={user?.email || ''} 
             disabled
@@ -50,7 +50,7 @@ return (
         </div>
         
         <div>
-        <Label className="text-sm text-[#7D7589] mb-1.5">Username</Label>
+        <Label className="text-sm text-[#5A4B70] mb-1.5">Username</Label>
         <Input 
             value={profile?.username || ''} 
             onChange={(e) => onUpdate({ username: e.target.value })}
@@ -60,7 +60,7 @@ return (
         </div>
         
         <div>
-        <Label className="text-sm text-[#7D7589] mb-1.5">Date of Birth</Label>
+        <Label className="text-sm text-[#5A4B70] mb-1.5">Date of Birth</Label>
         <Input 
             type="date"
             value={profile?.date_of_birth || ''} 
@@ -70,7 +70,7 @@ return (
         </div>
         
         <div>
-        <Label className="text-sm text-[#7D7589] mb-1.5">Phone Number</Label>
+        <Label className="text-sm text-[#5A4B70] mb-1.5">Phone Number</Label>
         <Input 
             type="tel"
             value={profile?.phone_number || ''} 
@@ -91,7 +91,7 @@ return (
     
     <div className="space-y-4">
         <div>
-        <Label className="text-sm text-[#7D7589] mb-1.5">Baby Full Name</Label>
+        <Label className="text-sm text-[#5A4B70] mb-1.5">Baby Full Name</Label>
         <Input 
             value={profile?.baby_full_name || ''} 
             onChange={(e) => onUpdate({ baby_full_name: e.target.value })}
@@ -101,7 +101,7 @@ return (
         </div>
         
         <div>
-        <Label className="text-sm text-[#7D7589] mb-1.5">Baby Date of Birth</Label>
+        <Label className="text-sm text-[#5A4B70] mb-1.5">Baby Date of Birth</Label>
         <Input 
             type="date"
             value={profile?.baby_date_of_birth || ''} 
@@ -111,7 +111,7 @@ return (
         </div>
         
         <div>
-        <Label className="text-sm text-[#7D7589] mb-1.5">Baby Gender</Label>
+        <Label className="text-sm text-[#5A4B70] mb-1.5">Baby Gender</Label>
         <Select 
             value={profile?.baby_gender || ''} 
             onValueChange={(value) => onUpdate({ baby_gender: value })}
@@ -139,7 +139,7 @@ return (
     
     <div className="space-y-4">
         <div>
-        <Label className="text-sm text-[#7D7589] mb-1.5">Type</Label>
+        <Label className="text-sm text-[#5A4B70] mb-1.5">Type</Label>
         <Select 
             value={profile?.support_type || ''} 
             onValueChange={(value) => onUpdate({ support_type: value })}
@@ -158,7 +158,7 @@ return (
         </div>
         
         <div>
-        <Label className="text-sm text-[#7D7589] mb-1.5">Name</Label>
+        <Label className="text-sm text-[#5A4B70] mb-1.5">Name</Label>
         <Input 
             value={profile?.support_name || ''} 
             onChange={(e) => onUpdate({ support_name: e.target.value })}
@@ -168,7 +168,7 @@ return (
         </div>
         
         <div>
-        <Label className="text-sm text-[#7D7589] mb-1.5">Email</Label>
+        <Label className="text-sm text-[#5A4B70] mb-1.5">Email</Label>
         <Input 
             type="email"
             value={profile?.support_email || ''} 
@@ -179,7 +179,7 @@ return (
         </div>
         
         <div>
-        <Label className="text-sm text-[#7D7589] mb-1.5">Phone Number</Label>
+        <Label className="text-sm text-[#5A4B70] mb-1.5">Phone Number</Label>
         <Input 
             type="tel"
             value={profile?.support_phone || ''} 

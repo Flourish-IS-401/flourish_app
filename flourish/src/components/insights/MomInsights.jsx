@@ -144,7 +144,7 @@ export default function MomInsights({moodEntries,journalEntries,babyActivities,m
         <>
             <div className="bg-gradient-to-br from-[#E8E4F3] to-[#EDD9E8] rounded-3xl p-6 shadow-sm">
                 <h2 className="text-xl font-semibold text-[#4A4458]">Mom Insights</h2>
-                <p className="text-sm text-[#7D7589] mt-1">Understanding your emotional patterns</p>
+                <p className="text-sm text-[#5A4B70] mt-1">Understanding your emotional patterns</p>
             </div>
 
             <div className="bg-white rounded-3xl p-6 shadow-sm">
@@ -169,8 +169,8 @@ export default function MomInsights({moodEntries,journalEntries,babyActivities,m
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={moodTrendsData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#E8E4F3" vertical={false} />
-                            <XAxis dataKey="date" tick={{ fill: '#7D7589', fontSize: 12 }} />
-                            <YAxis domain={[0, 100]} tick={{ fill: '#7D7589', fontSize: 12 }} />
+                            <XAxis dataKey="date" tick={{ fill: '#5A4B70', fontSize: 12 }} />
+                            <YAxis domain={[0, 100]} tick={{ fill: '#5A4B70', fontSize: 12 }} />
                             <Tooltip />
                             <Line
                                 type="monotone"
@@ -186,7 +186,7 @@ export default function MomInsights({moodEntries,journalEntries,babyActivities,m
                 <div className="space-y-2">
                     {weekAvgMood && (
                         <div className="p-3 bg-[#F5EEF8] rounded-xl">
-                            <p className="text-xs text-[#7D7589] mb-1">Average Mood</p>
+                            <p className="text-xs text-[#5A4B70] mb-1">Average Mood</p>
                             <p className="text-lg font-semibold text-[#4A4458]">{weekAvgMood}/100</p>
                         </div>
                     )}
@@ -224,8 +224,8 @@ export default function MomInsights({moodEntries,journalEntries,babyActivities,m
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={moodTimeData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#E8E4F3" vertical={false} />
-                            <XAxis dataKey="time" tick={{ fill: '#7D7589', fontSize: 12 }} />
-                            <YAxis domain={[0, 100]} tick={{ fill: '#7D7589', fontSize: 12 }} />
+                            <XAxis dataKey="time" tick={{ fill: '#5A4B70', fontSize: 12 }} />
+                            <YAxis domain={[0, 100]} tick={{ fill: '#5A4B70', fontSize: 12 }} />
                             <Tooltip />
                             <Bar dataKey="mood" fill="#8B7A9F" radius={[8, 8, 0, 0]} />
                         </BarChart>
@@ -243,7 +243,7 @@ export default function MomInsights({moodEntries,journalEntries,babyActivities,m
                         {sortedMoodChips.map(([label, count]) => (
                             <div key={label} className="flex items-center justify-between p-3 bg-[#F5EEF8] rounded-xl">
                                 <span className="text-sm font-medium text-[#4A4458]">{label}</span>
-                                <span className="text-sm text-[#7D7589]">{count} times</span>
+                                <span className="text-sm text-[#5A4B70]">{count} times</span>
                             </div>
                         ))}
                     </div>
@@ -260,13 +260,13 @@ export default function MomInsights({moodEntries,journalEntries,babyActivities,m
                     <div className="grid grid-cols-2 gap-3 mb-3">
                         {avgMoodWithJournal && (
                             <div className="p-4 bg-gradient-to-br from-[#D9EEF2] to-[#E8E4F3] rounded-xl">
-                                <p className="text-xs text-[#7D7589] mb-1">With Journaling</p>
+                                <p className="text-xs text-[#5A4B70] mb-1">With Journaling</p>
                                 <p className="text-2xl font-semibold text-[#4A4458]">{avgMoodWithJournal}</p>
                             </div>
                         )}
                         {avgMoodWithoutJournal && (
                             <div className="p-4 bg-[#F5EEF8] rounded-xl">
-                                <p className="text-xs text-[#7D7589] mb-1">Without Journaling</p>
+                                <p className="text-xs text-[#5A4B70] mb-1">Without Journaling</p>
                                 <p className="text-2xl font-semibold text-[#4A4458]">{avgMoodWithoutJournal}</p>
                             </div>
                         )}
@@ -294,8 +294,8 @@ export default function MomInsights({moodEntries,journalEntries,babyActivities,m
                         <ResponsiveContainer width="100%" height="100%">
                             <ScatterChart>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#E8E4F3" />
-                                <XAxis dataKey="sleep" name="Baby Sleep (hrs)" tick={{ fill: '#7D7589', fontSize: 12 }} />
-                                <YAxis dataKey="mood" name="Your Mood" domain={[0, 100]} tick={{ fill: '#7D7589', fontSize: 12 }} />
+                                <XAxis dataKey="sleep" name="Baby Sleep (hrs)" tick={{ fill: '#5A4B70', fontSize: 12 }} />
+                                <YAxis dataKey="mood" name="Your Mood" domain={[0, 100]} tick={{ fill: '#5A4B70', fontSize: 12 }} />
                                 <Tooltip cursor={{ strokeDasharray: '3 3' }} />
                                 <Scatter data={momMoodSleepData} fill="#EDD9E8" />
                             </ScatterChart>
@@ -314,8 +314,8 @@ export default function MomInsights({moodEntries,journalEntries,babyActivities,m
                         <ResponsiveContainer width="100%" height="100%">
                             <ScatterChart>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#E8E4F3" />
-                                <XAxis dataKey="feedings" name="Daily Feedings" tick={{ fill: '#7D7589', fontSize: 12 }} />
-                                <YAxis dataKey="mood" name="Your Mood" domain={[0, 100]} tick={{ fill: '#7D7589', fontSize: 12 }} />
+                                <XAxis dataKey="feedings" name="Daily Feedings" tick={{ fill: '#5A4B70', fontSize: 12 }} />
+                                <YAxis dataKey="mood" name="Your Mood" domain={[0, 100]} tick={{ fill: '#5A4B70', fontSize: 12 }} />
                                 <Tooltip cursor={{ strokeDasharray: '3 3' }} />
                                 <Scatter data={momMoodFeedingData} fill="#D9EEF2" />
                             </ScatterChart>

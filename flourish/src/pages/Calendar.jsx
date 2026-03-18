@@ -55,7 +55,7 @@ export default function Calendar() {
                     className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all ${
                         activeTab === 'calendar'
                             ? 'bg-white text-[#4A4458] shadow-sm'
-                            : 'text-[#7D7589]'
+                            : 'text-[#5A4B70]'
                     }`}
                 >
                     Calendar
@@ -66,7 +66,7 @@ export default function Calendar() {
                     className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all ${
                         activeTab === 'insights'
                             ? 'bg-white text-[#4A4458] shadow-sm'
-                            : 'text-[#7D7589]'
+                            : 'text-[#5A4B70]'
                     }`}
                 >
                     Insights

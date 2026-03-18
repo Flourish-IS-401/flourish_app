@@ -65,7 +65,7 @@ export default function MonthView({
 
             <div className="grid grid-cols-7 gap-2 mb-4">
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                    <div key={day} className="text-center text-xs font-medium text-[#7D7589] py-2">
+                    <div key={day} className="text-center text-xs font-medium text-[#5A4B70] py-2">
                         {day}
                     </div>
                 ))}
@@ -89,10 +89,10 @@ export default function MonthView({
                             onClick={() => setSelectedDate(day)}
                             className={`aspect-square rounded-xl p-2 relative transition-all ${
                                 isSelected
-                                    ? 'bg-[#8B7A9F] text-white'
+                                    ? 'bg-[#7D6F99] text-white'
                                     : isTodayDate
-                                    ? 'bg-[#E8E4F3] text-[#4A4458]'
-                                    : 'hover:bg-[#E8E4F3]/50 text-[#4A4458]'
+                                    ? 'bg-[#7D6F99] text-white text-bold]'
+                                    : 'hover:bg-[#E8E4F3]/50 text-[#4A4458] '
                             }`}
                         >
                             <div className="text-sm font-medium">{format(day, 'd')}</div>

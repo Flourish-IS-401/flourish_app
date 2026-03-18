@@ -94,7 +94,7 @@ export default function BabyInsights({ babyActivities, babyMoods }) {
         <>
             <div className="bg-gradient-to-br from-[#D9EEF2] to-[#E8E4F3] rounded-3xl p-6 shadow-sm mt-8">
                 <h2 className="text-xl font-semibold text-[#4A4458]">Baby Insights</h2>
-                <p className="text-sm text-[#7D7589] mt-1">Discovering patterns in baby&apos;s rhythms</p>
+                <p className="text-sm text-[#5A4B70] mt-1">Discovering patterns in baby&apos;s rhythms</p>
             </div>
 
             {babyMoodSleepData.length > 0 && (
@@ -107,8 +107,8 @@ export default function BabyInsights({ babyActivities, babyMoods }) {
                         <ResponsiveContainer width="100%" height="100%">
                             <ScatterChart>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#E8E4F3" />
-                                <XAxis dataKey="sleep" name="Sleep (hrs)" tick={{ fill: '#7D7589', fontSize: 12 }} />
-                                <YAxis dataKey="mood" name="Mood" domain={[0, 100]} tick={{ fill: '#7D7589', fontSize: 12 }} />
+                                <XAxis dataKey="sleep" name="Sleep (hrs)" tick={{ fill: '#5A4B70', fontSize: 12 }} />
+                                <YAxis dataKey="mood" name="Mood" domain={[0, 100]} tick={{ fill: '#5A4B70', fontSize: 12 }} />
                                 <Tooltip cursor={{ strokeDasharray: '3 3' }} />
                                 <Scatter data={babyMoodSleepData} fill="#8B7A9F" />
                             </ScatterChart>
@@ -127,8 +127,8 @@ export default function BabyInsights({ babyActivities, babyMoods }) {
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={feedingsByHour}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#E8E4F3" vertical={false} />
-                                <XAxis dataKey="hour" tick={{ fill: '#7D7589', fontSize: 10 }} />
-                                <YAxis tick={{ fill: '#7D7589', fontSize: 12 }} />
+                                <XAxis dataKey="hour" tick={{ fill: '#5A4B70', fontSize: 10 }} />
+                                <YAxis tick={{ fill: '#5A4B70', fontSize: 12 }} />
                                 <Tooltip />
                                 <Bar dataKey="count" fill="#EDD9E8" radius={[8, 8, 0, 0]} />
                             </BarChart>
@@ -147,8 +147,8 @@ export default function BabyInsights({ babyActivities, babyMoods }) {
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={napsByHour}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#E8E4F3" vertical={false} />
-                                <XAxis dataKey="hour" tick={{ fill: '#7D7589', fontSize: 10 }} />
-                                <YAxis tick={{ fill: '#7D7589', fontSize: 12 }} />
+                                <XAxis dataKey="hour" tick={{ fill: '#5A4B70', fontSize: 10 }} />
+                                <YAxis tick={{ fill: '#5A4B70', fontSize: 12 }} />
                                 <Tooltip />
                                 <Bar dataKey="count" fill="#D9EEF2" radius={[8, 8, 0, 0]} />
                             </BarChart>
@@ -167,13 +167,13 @@ export default function BabyInsights({ babyActivities, babyMoods }) {
                     <div className="grid grid-cols-2 gap-3 mb-3">
                         {avgMoodWithLongNaps && (
                             <div className="p-4 bg-gradient-to-br from-[#D9EEF2] to-[#E8E4F3] rounded-xl">
-                                <p className="text-xs text-[#7D7589] mb-1">Long Naps (2+ hrs)</p>
+                                <p className="text-xs text-[#5A4B70] mb-1">Long Naps (2+ hrs)</p>
                                 <p className="text-2xl font-semibold text-[#4A4458]">{avgMoodWithLongNaps}</p>
                             </div>
                         )}
                         {avgMoodWithShortNaps && (
                             <div className="p-4 bg-[#F5EEF8] rounded-xl">
-                                <p className="text-xs text-[#7D7589] mb-1">Short Naps (&lt;2 hrs)</p>
+                                <p className="text-xs text-[#5A4B70] mb-1">Short Naps (&lt;2 hrs)</p>
                                 <p className="text-2xl font-semibold text-[#4A4458]">{avgMoodWithShortNaps}</p>
                             </div>
                         )}
@@ -204,15 +204,15 @@ export default function BabyInsights({ babyActivities, babyMoods }) {
                                 <p className="font-medium text-[#4A4458] mb-2 capitalize">{tag}</p>
                                 <div className="grid grid-cols-3 gap-2">
                                     <div className="text-center">
-                                        <p className="text-xs text-[#7D7589]">Morning</p>
+                                        <p className="text-xs text-[#5A4B70]">Morning</p>
                                         <p className="text-sm font-semibold text-[#4A4458]">{times.Morning}</p>
                                     </div>
                                     <div className="text-center">
-                                        <p className="text-xs text-[#7D7589]">Afternoon</p>
+                                        <p className="text-xs text-[#5A4B70]">Afternoon</p>
                                         <p className="text-sm font-semibold text-[#4A4458]">{times.Afternoon}</p>
                                     </div>
                                     <div className="text-center">
-                                        <p className="text-xs text-[#7D7589]">Evening</p>
+                                        <p className="text-xs text-[#5A4B70]">Evening</p>
                                         <p className="text-sm font-semibold text-[#4A4458]">{times.Evening}</p>
                                     </div>
                                 </div>
