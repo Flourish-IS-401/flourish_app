@@ -27,7 +27,7 @@
         <div className="space-y-6">
         <button
             onClick={onBack}
-            className="flex items-center gap-2 text-[#7D7589] hover:text-[#8B7A9F] transition-colors"
+            className="flex items-center gap-2 text-[#5A4B70] hover:text-[#8B7A9F] transition-colors"
         >
             <ArrowLeft className="w-5 h-5" />
             <span>Back</span>
@@ -40,7 +40,7 @@
             </div>
             </div>
             <h2 className="text-2xl font-semibold text-[#4A4458]">Tell us about your baby</h2>
-            <p className="text-[#7D7589]">This helps us personalize your experience</p>
+            <p className="text-[#5A4B70]">This helps us personalize your experience</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 shadow-sm space-y-5">
@@ -76,8 +76,8 @@
                     onClick={() => setFormData({ ...formData, baby_gender: option.value })}
                     className={`py-3 px-4 rounded-xl border-2 transition-all text-sm ${
                     formData.baby_gender === option.value
-                        ? 'border-[#8B7A9F] bg-[#F5EEF8] text-[#4A4458]'
-                        : 'border-[#E8E4F3] text-[#7D7589] hover:border-[#D9D4E3]'
+                        ? 'border-[#8B7A9F] bg-[#F5EEF8] text-[#7D6F99]'
+                        : 'border-[#E8E4F3] text-[#7D6F99] hover:border-[#D9D4E3]'
                     }`}
                 >
                     {option.label}
@@ -89,7 +89,7 @@
             <div className="space-y-2 pt-2">
             <Button
                 type="submit"
-                className="w-full h-12 bg-[#8B7A9F] hover:bg-[#7A6A8F] text-white rounded-2xl text-base"
+                className="w-full h-12 bg-[#7D6F99] hover:bg-[#7A6A8F] text-white rounded-2xl text-base"
             >
                 Continue
             </Button>
@@ -98,7 +98,7 @@
                 type="button"
                 onClick={() => onSkip({ skipBaby: true })}
                 variant="ghost"
-                className="w-full text-[#7D7589] hover:text-[#8B7A9F] hover:bg-transparent"
+                className="w-full text-[#5A4B70] hover:text-[#7D6F99] hover:bg-transparent"
             >
                 Add later
             </Button>
