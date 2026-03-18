@@ -2471,19 +2471,19 @@
     ]
   },
   "packageFolders": {
-    "/Users/lukecarr/.nuget/packages/": {}
+    "/Users/ethan/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/lukecarr/Desktop/Test2/flourish_app/backend/flourishbackend/flourishbackend/flourishbackend.csproj",
+      "projectUniqueName": "/Users/ethan/Desktop/Documents IS Junior Core (WINTER)/IS 401/Flourish/flourish_app/backend/flourishbackend/flourishbackend/flourishbackend.csproj",
       "projectName": "flourishbackend",
-      "projectPath": "/Users/lukecarr/Desktop/Test2/flourish_app/backend/flourishbackend/flourishbackend/flourishbackend.csproj",
-      "packagesPath": "/Users/lukecarr/.nuget/packages/",
-      "outputPath": "/Users/lukecarr/Desktop/Test2/flourish_app/backend/flourishbackend/flourishbackend/obj/",
+      "projectPath": "/Users/ethan/Desktop/Documents IS Junior Core (WINTER)/IS 401/Flourish/flourish_app/backend/flourishbackend/flourishbackend/flourishbackend.csproj",
+      "packagesPath": "/Users/ethan/.nuget/packages/",
+      "outputPath": "/Users/ethan/Desktop/Documents IS Junior Core (WINTER)/IS 401/Flourish/flourish_app/backend/flourishbackend/flourishbackend/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/lukecarr/.nuget/NuGet/NuGet.Config"
+        "/Users/ethan/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
