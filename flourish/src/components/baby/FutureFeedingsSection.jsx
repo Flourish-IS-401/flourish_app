@@ -1,8 +1,7 @@
-    import React from 'react';
-    import { Milk, Moon, Clock } from 'lucide-react';
-    import { format, addMinutes, differenceInMinutes } from 'date-fns';
+import { Milk, Moon } from 'lucide-react';
+import { format, addMinutes, differenceInMinutes } from 'date-fns';
 
-    export default function FutureFeedingsSection({ activities }) {
+export default function FutureFeedingsSection({ activities }) {
     const calculateNextFeeding = () => {
         const feedings = activities
         .filter(a => ['breastfeed', 'bottle'].includes(a.type))

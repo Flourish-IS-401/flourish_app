@@ -61,6 +61,7 @@ import PartnerJournalView from './pages/PartnerJournalView.jsx';
 import Profile from './pages/Profile.jsx';
 import Resources from './pages/Resources.jsx';
 import __Layout from './Layout.jsx';
+import Insights from './pages/Insights.jsx'
 
 
 export const PAGES = {
@@ -77,6 +78,7 @@ export const PAGES = {
     "PartnerJournalView": PartnerJournalView,
     "Profile": Profile,
     "Resources": Resources,
+    "Insights" : Insights
 }
 
 export const pagesConfig = {
