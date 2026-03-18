@@ -33,7 +33,7 @@
         <div className="space-y-6">
         <button
             onClick={onBack}
-            className="flex items-center gap-2 text-[#7D7589] hover:text-[#8B7A9F] transition-colors"
+            className="flex items-center gap-2 text-[#5A4B70] hover:text-[#8B7A9F] transition-colors"
         >
             <ArrowLeft className="w-5 h-5" />
             <span>Back</span>
@@ -48,14 +48,14 @@
             <h2 className="text-2xl font-semibold text-[#4A4458]">
             Would you like to add someone to support you?
             </h2>
-            <p className="text-[#7D7589]">You can share updates and get help</p>
+            <p className="text-[#5A4B70]">You can share updates and get help</p>
         </div>
 
         {!showForm ? (
             <div className="space-y-3">
             <Button
                 onClick={() => setShowForm(true)}
-                className="w-full h-12 bg-[#8B7A9F] hover:bg-[#7A6A8F] text-white rounded-2xl text-base"
+                className="w-full h-12 bg-[#7D6F99] hover:bg-[#7A6A8F] text-white rounded-2xl text-base"
             >
                 Yes, add support person
             </Button>
@@ -63,7 +63,7 @@
             <Button
                 onClick={() => onSkip({ skipSupport: true })}
                 variant="outline"
-                className="w-full h-12 border-[#E8E4F3] text-[#7D7589] hover:bg-[#F5EEF8] rounded-2xl text-base"
+                className="w-full h-12 border-[#E8E4F3] text-[#5A4B70] hover:bg-[#F5EEF8] rounded-2xl text-base"
             >
                 Not right now
             </Button>
@@ -81,7 +81,7 @@
                     className={`py-3 px-4 rounded-xl border-2 transition-all text-sm ${
                         formData.support_type === type.value
                         ? 'border-[#8B7A9F] bg-[#F5EEF8] text-[#4A4458]'
-                        : 'border-[#E8E4F3] text-[#7D7589] hover:border-[#D9D4E3]'
+                        : 'border-[#E8E4F3] text-[#5A4B70] hover:border-[#D9D4E3]'
                     }`}
                     >
                     {type.label}
@@ -114,7 +114,7 @@
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="support_phone" className="text-[#7D7589]">
+                <Label htmlFor="support_phone" className="text-[#5A4B70]">
                 Phone Number <span className="text-xs">(Optional)</span>
                 </Label>
                 <Input
@@ -132,7 +132,7 @@
                 
                 <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                    <Label htmlFor="share_journals" className="text-[#7D7589]">Journals</Label>
+                    <Label htmlFor="share_journals" className="text-[#5A4B70]">Journals</Label>
                     <Switch
                     id="share_journals"
                     checked={formData.share_journals}
@@ -142,7 +142,7 @@
                 </div>
 
                 <div className="flex items-center justify-between">
-                    <Label htmlFor="share_mood" className="text-[#7D7589]">Mood</Label>
+                    <Label htmlFor="share_mood" className="text-[#5A4B70]">Mood</Label>
                     <Switch
                     id="share_mood"
                     checked={formData.share_mood}
@@ -152,7 +152,7 @@
                 </div>
 
                 <div className="flex items-center justify-between">
-                    <Label htmlFor="share_baby_tracking" className="text-[#7D7589]">Baby Tracking</Label>
+                    <Label htmlFor="share_baby_tracking" className="text-[#5A4B70]">Baby Tracking</Label>
                     <Switch
                     id="share_baby_tracking"
                     checked={formData.share_baby_tracking}
@@ -165,7 +165,7 @@
 
             <Button
                 onClick={handleContinue}
-                className="w-full h-12 bg-[#8B7A9F] hover:bg-[#7A6A8F] text-white rounded-2xl text-base mt-2"
+                className="w-full h-12 bg-[#7D6F99] hover:bg-[#7A6A8F] text-white rounded-2xl text-base mt-2"
             >
                 Continue
             </Button>

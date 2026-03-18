@@ -13,7 +13,7 @@ return (
 
     <div className="space-y-3">
     <h1 className="text-3xl font-semibold text-[#4A4458]">You're all set</h1>
-    <p className="text-lg text-[#7D7589]">
+    <p className="text-lg text-[#5A4B70]">
         You can update anything anytime in Settings.
     </p>
     </div>
@@ -21,7 +21,7 @@ return (
     <div className="pt-8">
     <Button
         onClick={onFinish}
-        className="w-full h-12 bg-[#8B7A9F] hover:bg-[#7A6A8F] text-white rounded-2xl text-base"
+        className="w-full h-12 bg-[#7D6F99] hover:bg-[#7A6A8F] text-white rounded-2xl text-base"
     >
         Go to Home
     </Button>
