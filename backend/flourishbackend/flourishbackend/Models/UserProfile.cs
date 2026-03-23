@@ -7,7 +7,7 @@ namespace Flourish.Models
     public class UserProfile
     {
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid User_Id { get; set; } = Guid.NewGuid();
 
         public string Username { get; set; }
 
@@ -29,9 +29,7 @@ namespace Flourish.Models
 
         public bool Notifications_Nap_Enabled { get; set; }
 
-        public List<string> Notifications_Feeding_Times { get; set; }
-
-        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public List<string> Notifications_Nap_Times { get; set; }
 
         // Represents the selected home features as a list of strings
         public List<string> HomeFeatures { get; set; } = new List<string> 
@@ -40,6 +38,5 @@ namespace Flourish.Models
             "baby", "support", "breathing", "journal", "meditations", "articles" 
         };
 
-        public string SupportName { get; set; } = "your partner";
     }
 }

@@ -6,9 +6,7 @@ namespace Flourish.Models
     public class SupportProfile
     {
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
-
-        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public Guid Support_Id { get; set; } = Guid.NewGuid();
 
         public string Support_Type { get; set; }
 
