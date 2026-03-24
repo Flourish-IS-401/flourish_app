@@ -19,14 +19,26 @@ export default function MoodCheckIn() {
 
     const handleSave = async () => {
         try {
-            await base44.entities.MoodEntry.create({
-                mood_value: moodValue,
-                date: new Date().toISOString().split('T')[0],
+            const response = await fetch("http://localhost:4000/api/MoodEntry", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    moodValue: moodValue,
+                    date: new Date().toISOString().split("T")[0],
+                    userId: userId, // must be a real Guid from the logged-in user
+                }),
             });
+    
+            if (!response.ok) {
+                throw new Error("Failed to save mood entry");
+            }
+    
             setSaved(true);
             setTimeout(() => setSaved(false), 2000);
         } catch (e) {
-            // Silent fail
+            console.error(e);
         }
     };
 

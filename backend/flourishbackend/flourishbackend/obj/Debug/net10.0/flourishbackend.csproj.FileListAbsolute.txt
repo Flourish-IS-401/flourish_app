@@ -445,3 +445,15 @@
 /Users/ethan/Desktop/Documents IS Junior Core (WINTER)/IS 401/Flourish/flourish_app/backend/flourishbackend/flourishbackend/obj/Debug/net10.0/flourishbackend.pdb
 /Users/ethan/Desktop/Documents IS Junior Core (WINTER)/IS 401/Flourish/flourish_app/backend/flourishbackend/flourishbackend/obj/Debug/net10.0/flourishbackend.genruntimeconfig.cache
 /Users/ethan/Desktop/Documents IS Junior Core (WINTER)/IS 401/Flourish/flourish_app/backend/flourishbackend/flourishbackend/obj/Debug/net10.0/ref/flourishbackend.dll
+/Users/parisward/Documents/GitHub/flourish_app/backend/flourishbackend/flourishbackend/obj/Debug/net10.0/flourishbackend.csproj.AssemblyReference.cache
+/Users/parisward/Documents/GitHub/flourish_app/backend/flourishbackend/flourishbackend/obj/Debug/net10.0/rpswa.dswa.cache.json
+/Users/parisward/Documents/GitHub/flourish_app/backend/flourishbackend/flourishbackend/obj/Debug/net10.0/flourishbackend.GeneratedMSBuildEditorConfig.editorconfig
+/Users/parisward/Documents/GitHub/flourish_app/backend/flourishbackend/flourishbackend/obj/Debug/net10.0/flourishbackend.AssemblyInfoInputs.cache
+/Users/parisward/Documents/GitHub/flourish_app/backend/flourishbackend/flourishbackend/obj/Debug/net10.0/flourishbackend.AssemblyInfo.cs
+/Users/parisward/Documents/GitHub/flourish_app/backend/flourishbackend/flourishbackend/obj/Debug/net10.0/flourishbackend.csproj.CoreCompileInputs.cache
+/Users/parisward/Documents/GitHub/flourish_app/backend/flourishbackend/flourishbackend/obj/Debug/net10.0/flourishbackend.MvcApplicationPartsAssemblyInfo.cs
+/Users/parisward/Documents/GitHub/flourish_app/backend/flourishbackend/flourishbackend/obj/Debug/net10.0/flourishbackend.MvcApplicationPartsAssemblyInfo.cache
+/Users/parisward/Documents/GitHub/flourish_app/backend/flourishbackend/flourishbackend/obj/Debug/net10.0/flourishbackend.sourcelink.json
+/Users/parisward/Documents/GitHub/flourish_app/backend/flourishbackend/flourishbackend/obj/Debug/net10.0/flourishbackend.dll
+/Users/parisward/Documents/GitHub/flourish_app/backend/flourishbackend/flourishbackend/obj/Debug/net10.0/refint/flourishbackend.dll
+/Users/parisward/Documents/GitHub/flourish_app/backend/flourishbackend/flourishbackend/obj/Debug/net10.0/flourishbackend.pdb
