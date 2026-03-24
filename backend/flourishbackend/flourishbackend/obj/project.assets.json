@@ -2471,31 +2471,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\psand\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/Users/parisward/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\psand\\OneDrive\\Desktop\\School\\flourish_app\\backend\\flourishbackend\\flourishbackend\\flourishbackend.csproj",
+      "projectUniqueName": "/Users/parisward/Documents/GitHub/flourish_app/backend/flourishbackend/flourishbackend/flourishbackend.csproj",
       "projectName": "flourishbackend",
-      "projectPath": "C:\\Users\\psand\\OneDrive\\Desktop\\School\\flourish_app\\backend\\flourishbackend\\flourishbackend\\flourishbackend.csproj",
-      "packagesPath": "C:\\Users\\psand\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\psand\\OneDrive\\Desktop\\School\\flourish_app\\backend\\flourishbackend\\flourishbackend\\obj\\",
+      "projectPath": "/Users/parisward/Documents/GitHub/flourish_app/backend/flourishbackend/flourishbackend/flourishbackend.csproj",
+      "packagesPath": "/Users/parisward/.nuget/packages/",
+      "outputPath": "/Users/parisward/Documents/GitHub/flourish_app/backend/flourishbackend/flourishbackend/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\psand\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/parisward/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -2554,7 +2547,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.102/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

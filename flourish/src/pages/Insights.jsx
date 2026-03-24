@@ -4,6 +4,8 @@ import { base44 } from '@/api/base44Client';
 import MomInsights from '@/components/insights/MomInsights';
 import BabyInsights from '@/components/insights/BabyInsights';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+import { UserCircle } from 'lucide-react';
 
 export default function Insights() {
     const navigate = useNavigate();
@@ -36,6 +38,18 @@ export default function Insights() {
 
     return (
         <div className="space-y-6 pb-8">
+            <div className="space-y-6 pb-8">
+                <div className="mb-2 flex justify-between items-center">
+                    <h1 className="text-2xl font-semibold text-[#4A4458]">Insights</h1>
+                    <button
+                    onClick={() => navigate(createPageUrl('Profile'))}
+                    className="p-2 hover:bg-white/50 rounded-full transition-colors"
+                    >
+                    <UserCircle className="w-8 h-8 text-[#8B7A9F]" />
+                    </button>
+                </div>
+            </div>
+
             <div className="flex gap-2 p-1 bg-[#E8E4F3]/50 rounded-2xl">
                 <button
                     onClick={() => navigate('/calendar')}

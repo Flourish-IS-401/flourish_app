@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Eye } from 'lucide-react';
+import { Eye, UserCircle } from 'lucide-react';
 
 // Import all "cards" from the home section
 import AffirmationCarousel from '@/components/home/AffirmationCarousel';
@@ -73,13 +73,25 @@ export default function Home() {
     return (
         <>
             <div className="space-y-6 pb-8">
+                <div className="mb-2 flex justify-between items-center">
+                    <h1 className="text-2xl font-semibold text-[#4A4458]">Home</h1>
+                    <button
+                    onClick={() => navigate(createPageUrl('Profile'))}
+                    className="p-2 hover:bg-white/50 rounded-full transition-colors"
+                    >
+                    <UserCircle className="w-8 h-8 text-[#8B7A9F]" />
+                    </button>
+                </div>
+            </div>
+            
+            <div className="space-y-6 pb-8">
                 {/* Dynamic Features ("Cards") */}
                 {enabledFeatures.map((featureId) => {
                 const feature = renderFeature(featureId);
                 return feature;
                 })}
 
-                {/* View Partner Screen Button */}
+                {/* Edit Home Screen Button */}
                 <button onClick={() => navigate(createPageUrl('EditHome'))} className="w-full py-3 px-4 rounded-2xl text-sm font-medium text-black hover:text-black bg-[#F5EEF8]/30 hover:bg-[#F5EEF8]/50 transition-all flex items-center justify-center gap-2">
                     <Eye className="w-4 h-4" />
                     Edit Home Screen
