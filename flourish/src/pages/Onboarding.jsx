@@ -1,5 +1,6 @@
     import React, { useState } from 'react';
     import { useNavigate } from 'react-router-dom';
+    import { setAuth } from '@/lib/auth';
     import { createPageUrl } from '@/utils';
     import { base44 } from '@/api/base44Client';
     import { useMutation, useQuery } from '@tanstack/react-query';
@@ -68,13 +69,14 @@
         return await base44.entities.UserProfile.create(profileData);
         },
         onSuccess: () => {
-        setCurrentStep(steps.length - 1);
+            setAuth('mother');
+            setCurrentStep(steps.length - 1);
         },
     });
 
     const handleSignIn = (signInData) => {
-        // Handle sign in logic - redirect to home
         console.log('Sign in:', signInData);
+        setAuth('mother');
         navigate(createPageUrl('Home'));
     };
 
@@ -97,8 +99,7 @@
 
     const handleSupportAccountComplete = (data) => {
         setFormData({ ...formData, ...data });
-        // Create support account and redirect to partner home
-        console.log('Support account created:', data);
+        setAuth('partner');
         navigate(createPageUrl('PartnerHome'));
     };
 
