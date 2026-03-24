@@ -4,3 +4,14 @@ node_modules/
 .env.*.local
 ./vs
 .\vs
+
+# .NET build artifacts
+backend/**/bin/
+backend/**/obj/
+
+# SQLite WAL files
+*.sqlite-shm
+*.sqlite-wal
+
+# Published output
+**/publish/
