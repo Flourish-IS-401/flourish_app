@@ -17,6 +17,12 @@ namespace Flourish.Models
 
         [Required]
         public string Reaction { get; set; } = string.Empty; // 'up' or 'down'
+
+        [Required]
+        [ForeignKey("UserProfile")]
+        public Guid UserId { get; set; }
+
+        public UserProfile UserProfile { get; set; }
     }
 }
 

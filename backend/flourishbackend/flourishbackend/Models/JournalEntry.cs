@@ -16,9 +16,9 @@ namespace Flourish.Models
         public bool ShareWithPartner { get; set; } = false;
 
         [Required]
-        [ForeignKey("BabyProfile")]
-        public Guid BabyId { get; set; }
+        [ForeignKey("UserProfile")]
+        public Guid UserId { get; set; }
 
-        public BabyProfile BabyProfile { get; set; }
+        public UserProfile UserProfile { get; set; }
     }
 }
