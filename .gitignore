@@ -26,9 +26,9 @@ pnpm-debug.log*
 Thumbs.db
 
 # .NET build artifacts
-**/bin/
-**/obj/
-**/publish/
+bin/
+obj/
+publish/
 TestResults/
 
 # Local databases

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -16,32 +17,32 @@ namespace flourishbackend.Controllers
         // Map frontend entity names to DbContext property names
         private static readonly Dictionary<string, string> EntityMap = new(StringComparer.OrdinalIgnoreCase)
         {
+            ["Affirmation"] = "Affirmations",
             ["AffirmationReaction"] = "AffirmationReactions",
             ["BabyActivity"] = "BabyActivities",
             ["BabyMood"] = "BabyMoods",
-            ["CustomAffirmation"] = "CustomAffirmations",
+            ["BabyProfile"] = "BabyProfiles",
             ["JournalEntry"] = "JournalEntries",
             ["MoodEntry"] = "MoodEntries",
             ["SavedResource"] = "SavedResources",
-            ["SelectedSupportRequest"] = "SelectedSupportRequests",
+            ["SupportProfile"] = "SupportProfiles",
             ["SupportRequest"] = "SupportRequests",
-            ["User"] = "Users",
             ["UserProfile"] = "UserProfiles",
         };
 
         // Map entity names to their CLR types
         private static readonly Dictionary<string, Type> EntityTypeMap = new(StringComparer.OrdinalIgnoreCase)
         {
+            ["Affirmation"] = typeof(Flourish.Models.Affirmation),
             ["AffirmationReaction"] = typeof(Flourish.Models.AffirmationReaction),
             ["BabyActivity"] = typeof(Flourish.Models.BabyActivity),
             ["BabyMood"] = typeof(Flourish.Models.BabyMood),
-            ["CustomAffirmation"] = typeof(Flourish.Models.CustomAffirmation),
+            ["BabyProfile"] = typeof(Flourish.Models.BabyProfile),
             ["JournalEntry"] = typeof(Flourish.Models.JournalEntry),
             ["MoodEntry"] = typeof(Flourish.Models.MoodEntry),
             ["SavedResource"] = typeof(Flourish.Models.SavedResource),
-            ["SelectedSupportRequest"] = typeof(Flourish.Models.SelectedSupportRequest),
+            ["SupportProfile"] = typeof(Flourish.Models.SupportProfile),
             ["SupportRequest"] = typeof(Flourish.Models.SupportRequest),
-            ["User"] = typeof(Flourish.Models.User),
             ["UserProfile"] = typeof(Flourish.Models.UserProfile),
         };
 
@@ -185,8 +186,9 @@ namespace flourishbackend.Controllers
             if (entity is Flourish.Models.UserProfile userProfile)
                 userProfile.EnsureDefaults();
 
-            // Ensure a new GUID is set for the Id
-            var idProp = entityType.GetProperty("Id");
+            // Ensure a new GUID is set for the primary key ([Key] or legacy "Id")
+            var idProp = entityType.GetProperties().FirstOrDefault(p => Attribute.IsDefined(p, typeof(System.ComponentModel.DataAnnotations.KeyAttribute)))
+                ?? entityType.GetProperty("Id");
             if (idProp != null)
             {
                 idProp.SetValue(entity, Guid.NewGuid());
@@ -244,6 +246,7 @@ namespace flourishbackend.Controllers
             {
                 // Skip id and created_date — these should not be updated
                 if (key.Equals("id", StringComparison.OrdinalIgnoreCase) ||
+                    key.Equals("user_id", StringComparison.OrdinalIgnoreCase) ||
                     key.Equals("created_date", StringComparison.OrdinalIgnoreCase))
                     continue;
 
