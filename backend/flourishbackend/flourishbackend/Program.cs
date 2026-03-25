@@ -44,7 +44,7 @@ app.UseCors("AllowFrontend");
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<FlourishDbContext>();
-    db.Database.EnsureCreated();
+    db.Database.Migrate();
     DevUserSeed.EnsureDevUser(db);
     DevUserSeed.EnsureDevBabyProfile(db);
 }

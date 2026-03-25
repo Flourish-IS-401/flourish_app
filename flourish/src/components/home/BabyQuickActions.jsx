@@ -5,6 +5,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createBabyActivity } from '@/api/babyActivityApi';
 import { createBabyMood } from '@/api/babyMoodApi';
 import { createBabyProfile, listBabyProfiles } from '@/api/babyProfileApi';
+import { listUserProfiles, USER_PROFILES_QUERY_KEY } from '@/api/userProfileApi';
+import { pickPrimaryUserProfile } from '@/lib/devUser';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Baby, Milk, Moon, Clock } from 'lucide-react';
@@ -18,9 +20,21 @@ export default function BabyQuickActions() {
     const [isBabyMoodDragging, setIsBabyMoodDragging] = useState(false);
     const ensureBabyAttemptedRef = useRef(false);
 
+    const { data: profiles = [] } = useQuery({
+        queryKey: USER_PROFILES_QUERY_KEY,
+        queryFn: () => listUserProfiles(),
+    });
+    const profile = pickPrimaryUserProfile(profiles);
+    const userId = profile?.user_id ?? profile?.userId;
+
+    useEffect(() => {
+        ensureBabyAttemptedRef.current = false;
+    }, [userId]);
+
     const { data: babyProfiles = [], isSuccess: babyListReady } = useQuery({
-        queryKey: ['babyProfiles'],
-        queryFn: () => listBabyProfiles(),
+        queryKey: ['babyProfiles', userId],
+        queryFn: () => listBabyProfiles({ filter: { user_id: userId } }),
+        enabled: Boolean(userId),
     });
 
     const { mutate: ensureDefaultBaby } = useMutation({
@@ -28,6 +42,7 @@ export default function BabyQuickActions() {
             createBabyProfile({
                 baby_name: 'Baby',
                 baby_date_of_birth: '2024-06-01T00:00:00.000Z',
+                user_id: userId,
             }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['babyProfiles'] });
@@ -38,19 +53,26 @@ export default function BabyQuickActions() {
     });
 
     useEffect(() => {
-        if (!babyListReady || babyProfiles.length > 0 || ensureBabyAttemptedRef.current) {
+        if (
+            !userId ||
+            !babyListReady ||
+            babyProfiles.length > 0 ||
+            ensureBabyAttemptedRef.current
+        ) {
             return;
         }
         ensureBabyAttemptedRef.current = true;
         ensureDefaultBaby();
-    }, [babyListReady, babyProfiles.length, ensureDefaultBaby]);
+    }, [userId, babyListReady, babyProfiles.length, ensureDefaultBaby]);
 
     const ensureBabyId = async () => {
+        if (!userId) return '';
         const fromList = babyProfiles[0]?.baby_id ?? babyProfiles[0]?.babyId;
         if (fromList) return String(fromList);
         const created = await createBabyProfile({
             baby_name: 'Baby',
             baby_date_of_birth: '2024-06-01T00:00:00.000Z',
+            user_id: userId,
         });
         const bid = created?.baby_id ?? created?.babyId;
         await queryClient.invalidateQueries({ queryKey: ['babyProfiles'] });
@@ -103,6 +125,7 @@ export default function BabyQuickActions() {
             const duration = Math.round((new Date(feedingData.endTime) - new Date(feedingData.startTime)) / 60000);
             createActivityMutation.mutate({
             baby_id: bid,
+            user_id: userId,
             type: feedingData.type,
             timestamp: feedingData.startTime,
             duration_minutes: duration,
@@ -138,6 +161,7 @@ export default function BabyQuickActions() {
             const duration = Math.round((new Date(napData.endTime) - new Date(napData.startTime)) / 60000);
             createActivityMutation.mutate({
             baby_id: bid,
+            user_id: userId,
             type: 'nap',
             timestamp: napData.startTime,
             duration_minutes: duration,
@@ -167,6 +191,7 @@ export default function BabyQuickActions() {
                 }
                 await createBabyMoodMutation.mutateAsync({
                     baby_id: bid,
+                    user_id: userId,
                     mood_value: moodData.mood_value,
                     timestamp: new Date().toISOString(),
                     tags: Array.isArray(moodData.tags) ? [...moodData.tags] : [],

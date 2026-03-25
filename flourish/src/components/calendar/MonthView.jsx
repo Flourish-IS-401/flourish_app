@@ -31,13 +31,19 @@ export default function MonthView({
 
     const getMoodsForDate = (date) => {
         const dateStr = format(date, 'yyyy-MM-dd');
-        return moodEntries.filter(m => m.date === dateStr);
+        return moodEntries.filter((m) => (m.date ?? m.Date) === dateStr);
+    };
+
+    const moodNumeric = (m) => {
+        const v = m?.mood_value ?? m?.MoodValue;
+        const n = typeof v === 'number' ? v : parseInt(v, 10);
+        return Number.isFinite(n) ? n : 0;
     };
 
     const getAverageMood = (moods) => {
         if (moods.length === 0) return null;
         return Math.round(
-            moods.reduce((sum, m) => sum + m.mood_value, 0) / moods.length
+            moods.reduce((sum, m) => sum + moodNumeric(m), 0) / moods.length,
         );
     };
 

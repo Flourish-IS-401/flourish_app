@@ -4,7 +4,6 @@ import { ChevronDown, ChevronUp, Smile, Baby, BookOpen, Milk, Moon, MoreHorizont
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 import DeleteConfirmationDialog from '@/components/ui/delete-confirmation-dialog';
 import EditMoodDialog from '@/components/calendar/EditMoodDialog';
@@ -12,6 +11,8 @@ import EditBabyActivityDialog from '@/components/calendar/EditBabyActivityDialog
 import { deleteMoodEntry, updateMoodEntry } from '@/api/moodApi';
 import { deleteBabyActivity, updateBabyActivity } from '@/api/babyActivityApi';
 import { deleteBabyMood } from '@/api/babyMoodApi';
+import { deleteJournalEntry } from '@/api/journalEntryApi';
+import { journalEntryCreatedAt, journalEntryId } from '@/lib/journalEntryFields';
 
 /** API returns snake_case (.NET); older Base44 data may be camel/snake — support both. */
 function moodEntryId(m) {
@@ -126,10 +127,11 @@ export default function DayDetailsDropdowns({ moodEntries, babyActivities, babyM
 
     const handleDeleteJournal = async () => {
         try {
-        await base44.entities.JournalEntry.delete(deleteDialog.id);
-        queryClient.invalidateQueries({ queryKey: ['journalEntries'] });
+            await deleteJournalEntry(deleteDialog.id);
+            queryClient.invalidateQueries({ queryKey: ['journalEntries'] });
+            queryClient.invalidateQueries({ queryKey: ['journalEntriesCalendar'] });
         } catch (error) {
-        console.error('Error deleting journal:', error);
+            console.error('Error deleting journal:', error);
         }
         setDeleteDialog({ open: false, type: null, id: null });
     };
@@ -422,9 +424,12 @@ export default function DayDetailsDropdowns({ moodEntries, babyActivities, babyM
                 {journalEntries.length === 0 ? (
                 <p className="text-sm text-[#5A4B70] text-center py-4">No journal entries</p>
                 ) : (
-                journalEntries.map((entry) => (
-                    <div 
-                    key={entry.id} 
+                journalEntries.map((entry) => {
+                    const jeId = journalEntryId(entry);
+                    const created = journalEntryCreatedAt(entry);
+                    return (
+                    <div
+                    key={jeId}
                     className="p-3 bg-[#F5EEF8]/50 rounded-xl group"
                     >
                     <div className="flex items-start justify-between mb-2">
@@ -433,13 +438,15 @@ export default function DayDetailsDropdowns({ moodEntries, babyActivities, babyM
                         )}
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
-                            onClick={() => navigate(createPageUrl('Journal') + `?edit=${entry.id}`)}
+                            type="button"
+                            onClick={() => navigate(`${createPageUrl('Journal')}?edit=${jeId}`)}
                             className="p-1 hover:bg-[#8B7A9F]/10 rounded"
                         >
                             <Edit className="w-3.5 h-3.5 text-[#8B7A9F]" />
                         </button>
                         <button
-                            onClick={() => setDeleteDialog({ open: true, type: 'journal', id: entry.id })}
+                            type="button"
+                            onClick={() => setDeleteDialog({ open: true, type: 'journal', id: jeId })}
                             className="p-1 hover:bg-[#F5E6EA] rounded"
                         >
                             <Trash2 className="w-3.5 h-3.5 text-[#5A4B70]" />
@@ -448,10 +455,11 @@ export default function DayDetailsDropdowns({ moodEntries, babyActivities, babyM
                     </div>
                     <p className="text-sm text-[#4A4458] mb-2 line-clamp-3">{entry.content}</p>
                     <p className="text-xs text-[#5A4B70]">
-                        {format(new Date(entry.created_date), 'h:mm a')}
+                        {created ? format(created, 'h:mm a') : '—'}
                     </p>
                     </div>
-                ))
+                    );
+                })
                 )}
             </div>
             )}

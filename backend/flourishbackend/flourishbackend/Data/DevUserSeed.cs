@@ -53,6 +53,7 @@ public static class DevUserSeed
             BabyId = DevBabyId,
             BabyName = "Baby",
             BabyDateOfBirth = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc),
+            UserId = DevUserId,
         });
 
         db.SaveChanges();

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("flourishbackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+550125e7be3bfb61a66b9489dcb40bf37885b261")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+012b40ad1c78f42b217d1037ed67246c7bd36abd")]
 [assembly: System.Reflection.AssemblyProductAttribute("flourishbackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("flourishbackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
