@@ -144,3 +144,6 @@ Confirm that a full flow works: UI → API → database → persistence after re
    Refresh the browser (F5 or Cmd+R). The mood entry should still appear (e.g. on Home or Calendar). The new row remains in the database and is loaded again by the API.
 
 This end-to-end path (UI → Vite proxy → ASP.NET → SQLite → response → UI and refresh) confirms the vertical slice is working.
+
+##Deploying
+With the CI/CD pipeline in place, each push to the main branch will automatically be deployed to production.
