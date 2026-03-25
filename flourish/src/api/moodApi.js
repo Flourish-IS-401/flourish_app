@@ -1,23 +1,23 @@
-import { apiFetch, APP_ID } from "./client";
+import { createEntity, deleteEntity, listEntities, updateEntity } from './entityClient';
+
+const ENTITY = 'MoodEntry';
 
 export function createMoodEntry(data) {
-    return apiFetch(`/apps/${APP_ID}/entities/MoodEntry`, {
-        method: "POST",
-        body: JSON.stringify(data),
-    });
+    return createEntity(ENTITY, data);
 }
 
-export function getMoodEntries() {
-    return apiFetch(`/apps/${APP_ID}/entities/MoodEntry`);
+export function getMoodEntries(options) {
+    return listEntities(ENTITY, options ?? {});
 }
 
 export function getMoodEntriesByUser(userId) {
-    const q = encodeURIComponent(JSON.stringify({ user_id: userId }));
-    return apiFetch(`/apps/${APP_ID}/entities/MoodEntry?q=${q}`);
+    return listEntities(ENTITY, { filter: { user_id: userId } });
 }
 
 export function deleteMoodEntry(id) {
-    return apiFetch(`/apps/${APP_ID}/entities/MoodEntry/${id}`, {
-        method: "DELETE",
-    });
+    return deleteEntity(ENTITY, id);
+}
+
+export function updateMoodEntry(id, data) {
+    return updateEntity(ENTITY, id, data);
 }

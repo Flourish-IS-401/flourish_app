@@ -3,11 +3,11 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const getMoodColor = (value) => {
-    if (value <= 20) return 'bg-[#B8A5C4]';
-    if (value <= 40) return 'bg-[#C4A3A7]';
-    if (value <= 60) return 'bg-[#E8E4F3]';
+    if (value <= 20) return 'bg-[#E8E4F3]';
+    if (value <= 40) return 'bg-[#EDD9E8]';
+    if (value <= 60) return 'bg-[#F5EEF8]';
     if (value <= 80) return 'bg-[#D9EEF2]';
-    return 'bg-[#A8D5BA]';
+    return 'bg-[#DCEAF0]';
 };
 
 export default function MonthView({

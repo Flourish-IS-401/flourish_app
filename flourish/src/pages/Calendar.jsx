@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { listBabyActivities } from '@/api/babyActivityApi';
+import { listBabyMoods } from '@/api/babyMoodApi';
 import { format, isSameDay } from 'date-fns';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DayDetailsDropdowns from '@/components/calendar/DayDetailsDropdowns';
@@ -21,8 +23,13 @@ export default function Calendar() {
     });
 
     const { data: babyActivities = [] } = useQuery({
-        queryKey: ['babyActivitiesCalendar'],
-        queryFn: () => base44.entities.BabyActivity.list('-timestamp', 200),
+        queryKey: ['babyActivities'],
+        queryFn: () => listBabyActivities({ sort: '-timestamp', limit: 200 }),
+    });
+
+    const { data: babyMoods = [] } = useQuery({
+        queryKey: ['babyMoods'],
+        queryFn: () => listBabyMoods({ sort: '-timestamp', limit: 200 }),
     });
 
     const { data: journalEntries = [] } = useQuery({
@@ -36,7 +43,17 @@ export default function Calendar() {
     };
 
     const getActivitiesForDate = (date) => {
-        return babyActivities.filter(a => isSameDay(new Date(a.timestamp), date));
+        return babyActivities.filter((a) => {
+            const ts = a.timestamp ?? a.Timestamp;
+            return ts && isSameDay(new Date(ts), date);
+        });
+    };
+
+    const getBabyMoodsForDate = (date) => {
+        return babyMoods.filter((m) => {
+            const ts = m.timestamp ?? m.Timestamp;
+            return ts && isSameDay(new Date(ts), date);
+        });
     };
 
     const getJournalEntriesForDate = (date) => {
@@ -45,6 +62,7 @@ export default function Calendar() {
 
     const selectedMoods = getMoodsForDate(selectedDate);
     const selectedActivities = getActivitiesForDate(selectedDate);
+    const selectedBabyMoods = getBabyMoodsForDate(selectedDate);
     const selectedJournals = getJournalEntriesForDate(selectedDate);
 
     return (
@@ -89,6 +107,7 @@ export default function Calendar() {
                 <DayDetailsDropdowns
                     moodEntries={selectedMoods}
                     babyActivities={selectedActivities}
+                    babyMoods={selectedBabyMoods}
                     journalEntries={selectedJournals}
                 />
             </div>

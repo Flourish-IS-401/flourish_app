@@ -1,8 +1,23 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ThumbsUp, ThumbsDown } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { listAffirmations } from '@/api/affirmationApi';
+import {
+    createAffirmationReaction,
+    listAffirmationReactions,
+    updateAffirmationReaction,
+} from '@/api/affirmationReactionApi';
+import { listUserProfiles, USER_PROFILES_QUERY_KEY } from '@/api/userProfileApi';
+import { pickPrimaryUserProfile } from '@/lib/devUser';
+
+function affirmationId(affirmation) {
+    return affirmation.affirmation_id ?? affirmation.affirmationId ?? affirmation.id;
+}
+
+function reactionRowId(row) {
+    return row.affirmation_reaction_id ?? row.id;
+}
 
 export default function AffirmationCarousel() {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -12,20 +27,27 @@ export default function AffirmationCarousel() {
 
     const queryClient = useQueryClient();
 
+    const { data: profiles = [] } = useQuery({
+        queryKey: USER_PROFILES_QUERY_KEY,
+        queryFn: () => listUserProfiles(),
+    });
+    const profile = pickPrimaryUserProfile(profiles);
+    const userId = profile?.user_id ?? profile?.userId;
+
     // 1) Load all affirmations from the Affirmation table
     const { data: affirmationsFromDb = [], isLoading: affirmationsLoading } = useQuery({
         queryKey: ['affirmations'],
-        queryFn: async () => {
-            return await base44.entities.Affirmation.list();
-        },
+        queryFn: () => listAffirmations(),
     });
 
-    // 2) Load all affirmation reactions
+    // 2) Load affirmation reactions for the current user
     const { data: reactionRows = [], isLoading: reactionsLoading } = useQuery({
-        queryKey: ['affirmationReactions'],
-        queryFn: async () => {
-            return await base44.entities.AffirmationReaction.list('-created_date');
-        },
+        queryKey: ['affirmationReactions', userId],
+        queryFn: () =>
+            listAffirmationReactions({
+                filter: { user_id: userId },
+            }),
+        enabled: Boolean(userId),
     });
 
     // Build a lookup of the most recent reaction for each affirmation
@@ -33,9 +55,9 @@ export default function AffirmationCarousel() {
         const map = {};
 
         for (const row of reactionRows) {
-            // keep first seen if list is sorted newest first
-            if (!map[row.affirmation_id]) {
-                map[row.affirmation_id] = row;
+            const aid = row.affirmation_id;
+            if (aid && !map[aid]) {
+                map[aid] = row;
             }
         }
 
@@ -46,7 +68,7 @@ export default function AffirmationCarousel() {
     // Do NOT show ones with a "down" reaction
     const visibleAffirmations = useMemo(() => {
         return affirmationsFromDb.filter((affirmation) => {
-            const existingReaction = reactionMap[affirmation.affirmationId || affirmation.id];
+            const existingReaction = reactionMap[affirmationId(affirmation)];
             return !existingReaction || existingReaction.reaction === 'up';
         });
     }, [affirmationsFromDb, reactionMap]);
@@ -87,19 +109,20 @@ export default function AffirmationCarousel() {
 
     const handleReaction = async (type) => {
         const affirmation = visibleAffirmations[currentIndex];
-        if (!affirmation) return;
+        if (!affirmation || !userId) return;
 
-        const affirmationId = affirmation.affirmationId || affirmation.id;
-        const existingReaction = reactionMap[affirmationId];
+        const affId = affirmationId(affirmation);
+        const existingReaction = reactionMap[affId];
 
         try {
             if (existingReaction) {
-                await base44.entities.AffirmationReaction.update(existingReaction.id, {
+                await updateAffirmationReaction(reactionRowId(existingReaction), {
                     reaction: type,
                 });
             } else {
-                await base44.entities.AffirmationReaction.create({
-                    affirmation_id: affirmationId,
+                await createAffirmationReaction({
+                    affirmation_id: affId,
+                    user_id: userId,
                     reaction: type,
                 });
             }
@@ -140,7 +163,7 @@ export default function AffirmationCarousel() {
 
     const currentAffirmation = visibleAffirmations[currentIndex];
     const currentReaction = currentAffirmation
-        ? reactionMap[currentAffirmation.affirmationId || currentAffirmation.id]?.reaction
+        ? reactionMap[affirmationId(currentAffirmation)]?.reaction
         : null;
 
     const variants = {
@@ -193,7 +216,7 @@ export default function AffirmationCarousel() {
             >
                 <AnimatePresence mode="wait" custom={direction}>
                     <motion.p
-                        key={currentAffirmation.affirmationId || currentAffirmation.id}
+                        key={affirmationId(currentAffirmation)}
                         custom={direction}
                         variants={variants}
                         initial="enter"

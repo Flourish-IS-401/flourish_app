@@ -2,18 +2,20 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Smile } from 'lucide-react';
 import { createMoodEntry } from '@/api/moodApi';
-// import { useAuth } from '@/lib/AuthContext'; // use this if your auth context has the current user
 
 const emojis = ['😔', '😕', '😐', '🙂', '😊'];
 
-export default function MoodCheckIn() {
+/**
+ * Local testing: optional override. Must exist in `UserProfiles`. Dev seed uses 11111111-1111-1111-1111-111111111111.
+ * Leave empty to use `userId` from `Home`.
+ */
+const TEMP_MOOD_USER_ID_FOR_TESTING = '11111111-1111-1111-1111-111111111111';
+
+export default function MoodCheckIn({ userId }) {
     const [moodValue, setMoodValue] = useState(50);
     const [isDragging, setIsDragging] = useState(false);
     const [saved, setSaved] = useState(false);
     const [error, setError] = useState('');
-
-    // Replace this with your actual logged-in user's ID from AuthContext
-    const userId = "PUT-REAL-USER-GUID-HERE";
 
     const handleMoodChange = (e) => {
         const value = parseInt(e.target.value, 10);
@@ -30,30 +32,43 @@ export default function MoodCheckIn() {
         return 'Great';
     };
 
+    /** Local calendar date (YYYY-MM-DD); avoid UTC shift from `toISOString().split('T')[0]`. */
+    const formatLocalYmd = (d) => {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    };
+
     const handleSave = async () => {
         try {
-            if (!userId) {
-                throw new Error('Missing user ID');
+            const effectiveUserId = TEMP_MOOD_USER_ID_FOR_TESTING.trim() || userId;
+
+            if (!effectiveUserId) {
+                setError('No profile id. Set TEMP_MOOD_USER_ID_FOR_TESTING or finish onboarding so Home passes userId.');
+                return;
             }
 
             const now = new Date();
-            const date = now.toISOString().split('T')[0];
-            const time = now.toTimeString().slice(0, 5);
+            const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-            await createMoodEntry({
+            // API uses JsonNamingPolicy.SnakeCaseLower — keys must be snake_case or UserId won't bind (FK fails).
+            const payload = {
                 mood_value: moodValue,
-                date: date,
-                time: time,
+                date: formatLocalYmd(now),
+                time: timeStr,
                 mood_label: getMoodLabel(moodValue),
-                user_id: userId,
-            });
+                user_id: effectiveUserId,
+            };
 
+            await createMoodEntry(payload);
+    
             setSaved(true);
             setError('');
             setTimeout(() => setSaved(false), 2000);
         } catch (e) {
             console.error('Failed to save mood entry:', e);
-            setError('Could not save mood.');
+            setError(e.message || 'Could not save mood.');
         }
     };
 
@@ -102,9 +117,7 @@ export default function MoodCheckIn() {
                 <span>Great</span>
             </div>
 
-            {error && (
-                <p className="text-sm text-red-500 mb-3">{error}</p>
-            )}
+            {error && <p className="text-sm text-red-500 mb-3">{error}</p>}
 
             <motion.button
                 whileTap={{ scale: 0.98 }}

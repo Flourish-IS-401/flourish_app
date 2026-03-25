@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using System.Reflection;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
@@ -82,10 +84,9 @@ namespace flourishbackend.Controllers
 
             var entityType = EntityTypeMap[entityName];
 
-            // Get all items as a queryable
-            IQueryable<object> query = (IQueryable<object>)dbSet;
+            IQueryable query = (IQueryable)dbSet;
 
-            // Apply filtering if q parameter is provided
+            // Apply filtering if q parameter is provided (must translate to SQL — no reflection GetValue in LINQ)
             if (!string.IsNullOrEmpty(q))
             {
                 try
@@ -96,14 +97,10 @@ namespace flourishbackend.Controllers
                         foreach (var (key, value) in filterDict)
                         {
                             var propInfo = FindProperty(entityType, key);
-                            if (propInfo != null)
-                            {
-                                var targetValue = ConvertJsonElement(value, propInfo.PropertyType);
-                                if (targetValue != null)
-                                {
-                                    query = query.Where(e => propInfo.GetValue(e)!.Equals(targetValue));
-                                }
-                            }
+                            if (propInfo == null) continue;
+                            var targetValue = ConvertJsonElement(value, propInfo.PropertyType);
+                            if (targetValue != null)
+                                query = ApplyWherePropertyEquals(query, entityType, propInfo, targetValue);
                         }
                     }
                 }
@@ -113,29 +110,23 @@ namespace flourishbackend.Controllers
                 }
             }
 
-            // Apply sorting
             if (!string.IsNullOrEmpty(sort))
             {
-                bool descending = sort.StartsWith("-");
-                string sortField = sort.TrimStart('-', '+');
-                var propInfo = FindProperty(entityType, sortField);
-                if (propInfo != null)
-                {
-                    if (descending)
-                        query = query.OrderByDescending(e => EF.Property<object>(e, propInfo.Name));
-                    else
-                        query = query.OrderBy(e => EF.Property<object>(e, propInfo.Name));
-                }
+                var descending = sort.StartsWith("-");
+                var sortField = sort.TrimStart('-', '+');
+                var sortProp = FindProperty(entityType, sortField);
+                if (sortProp != null)
+                    query = ApplyOrderByProperty(query, entityType, sortProp, descending);
             }
 
-            // Apply skip and limit
-            if (skip.HasValue) query = query.Skip(skip.Value);
-            if (limit.HasValue) query = query.Take(limit.Value);
+            if (skip.HasValue)
+                query = ApplySkip(query, entityType, skip.Value);
 
-            var results = await query.ToListAsync();
+            if (limit.HasValue)
+                query = ApplyTake(query, entityType, limit.Value);
 
-            // Serialize with snake_case
-            var json = JsonSerializer.Serialize(results, _jsonOptions);
+            var results = await ExecuteToListAsync(query, entityType);
+            var json = JsonSerializer.Serialize(results, results.GetType(), _jsonOptions);
             return Content(json, "application/json");
         }
 
@@ -187,6 +178,15 @@ namespace flourishbackend.Controllers
             if (idProp != null)
             {
                 idProp.SetValue(entity, Guid.NewGuid());
+            }
+
+            // Entities use *Id as key (e.g. MoodEntryId). Deserialization leaves Guid.Empty if key was omitted — fix that.
+            foreach (var prop in entityType.GetProperties())
+            {
+                if (prop.PropertyType != typeof(Guid)) continue;
+                if (prop.GetCustomAttribute<KeyAttribute>() == null) continue;
+                if (prop.GetValue(entity) is Guid g && g == Guid.Empty)
+                    prop.SetValue(entity, Guid.NewGuid());
             }
 
             // Set CreatedDate to now
@@ -342,6 +342,129 @@ namespace flourishbackend.Controllers
             }
 
             return null;
+        }
+
+        private static IQueryable ApplyWherePropertyEquals(
+            IQueryable source,
+            Type entityType,
+            PropertyInfo prop,
+            object targetValue)
+        {
+            var method = typeof(EntitiesController).GetMethod(
+                nameof(WherePropertyEqualsImpl),
+                BindingFlags.NonPublic | BindingFlags.Static);
+            var generic = method!.MakeGenericMethod(entityType);
+            return (IQueryable)generic.Invoke(null, new object[] { source, prop, targetValue })!;
+        }
+
+        private static IQueryable WherePropertyEqualsImpl<TEntity>(
+            IQueryable source,
+            PropertyInfo prop,
+            object targetValue) where TEntity : class
+        {
+            var query = (IQueryable<TEntity>)source;
+            var param = Expression.Parameter(typeof(TEntity), "e");
+            var propertyAccess = Expression.Call(
+                typeof(EF),
+                nameof(EF.Property),
+                new[] { prop.PropertyType },
+                param,
+                Expression.Constant(prop.Name));
+            var constant = Expression.Constant(targetValue, prop.PropertyType);
+            var equals = Expression.Equal(propertyAccess, constant);
+            var lambda = Expression.Lambda<Func<TEntity, bool>>(equals, param);
+            return Queryable.Where(query, lambda);
+        }
+
+        private static IQueryable ApplyOrderByProperty(
+            IQueryable source,
+            Type entityType,
+            PropertyInfo prop,
+            bool descending)
+        {
+            var method = typeof(EntitiesController).GetMethod(
+                nameof(OrderByPropertyImpl),
+                BindingFlags.NonPublic | BindingFlags.Static);
+            var generic = method!.MakeGenericMethod(entityType);
+            return (IQueryable)generic.Invoke(null, new object[] { source, prop, descending })!;
+        }
+
+        private static IQueryable OrderByPropertyImpl<TEntity>(
+            IQueryable source,
+            PropertyInfo prop,
+            bool descending) where TEntity : class
+        {
+            var query = (IQueryable<TEntity>)source;
+            var param = Expression.Parameter(typeof(TEntity), "e");
+            var keyAccess = Expression.Call(
+                typeof(EF),
+                nameof(EF.Property),
+                new[] { prop.PropertyType },
+                param,
+                Expression.Constant(prop.Name));
+            var delegateType = typeof(Func<,>).MakeGenericType(typeof(TEntity), prop.PropertyType);
+            var lambda = Expression.Lambda(delegateType, keyAccess, param);
+
+            var methodName = descending ? nameof(Queryable.OrderByDescending) : nameof(Queryable.OrderBy);
+            MethodInfo? orderBy = null;
+            foreach (var m in typeof(Queryable).GetMethods(BindingFlags.Public | BindingFlags.Static))
+            {
+                if (m.Name != methodName || !m.IsGenericMethodDefinition) continue;
+                var ps = m.GetParameters();
+                if (ps.Length != 2) continue;
+                if (!ps[1].ParameterType.IsGenericType) continue;
+                if (ps[1].ParameterType.GetGenericTypeDefinition() != typeof(Expression<>)) continue;
+                orderBy = m;
+                break;
+            }
+
+            if (orderBy == null)
+                throw new InvalidOperationException($"Could not resolve {methodName}.");
+
+            var genericOrderBy = orderBy.MakeGenericMethod(typeof(TEntity), prop.PropertyType);
+            return (IQueryable)genericOrderBy.Invoke(null, new object[] { query, lambda })!;
+        }
+
+        private static IQueryable ApplySkip(IQueryable source, Type entityType, int count)
+        {
+            return (IQueryable)typeof(Queryable).GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .First(m => m.Name == nameof(Queryable.Skip) && m.IsGenericMethodDefinition &&
+                            m.GetParameters().Length == 2 && m.GetParameters()[1].ParameterType == typeof(int))
+                .MakeGenericMethod(entityType)
+                .Invoke(null, new object[] { source, count })!;
+        }
+
+        private static IQueryable ApplyTake(IQueryable source, Type entityType, int count)
+        {
+            return (IQueryable)typeof(Queryable).GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .First(m => m.Name == nameof(Queryable.Take) && m.IsGenericMethodDefinition &&
+                            m.GetParameters().Length == 2 && m.GetParameters()[1].ParameterType == typeof(int))
+                .MakeGenericMethod(entityType)
+                .Invoke(null, new object[] { source, count })!;
+        }
+
+        private static async Task<object> ExecuteToListAsync(IQueryable query, Type elementType)
+        {
+            MethodInfo? toListAsync = null;
+            foreach (var m in typeof(EntityFrameworkQueryableExtensions).GetMethods(BindingFlags.Public | BindingFlags.Static))
+            {
+                if (m.Name != nameof(EntityFrameworkQueryableExtensions.ToListAsync)) continue;
+                if (!m.IsGenericMethodDefinition) continue;
+                var ps = m.GetParameters();
+                if (ps.Length != 2 || ps[1].ParameterType != typeof(CancellationToken)) continue;
+                var p0 = ps[0].ParameterType;
+                if (!p0.IsGenericType || p0.GetGenericTypeDefinition() != typeof(IQueryable<>)) continue;
+                toListAsync = m;
+                break;
+            }
+
+            if (toListAsync == null)
+                throw new InvalidOperationException("EF ToListAsync not found.");
+
+            var gm = toListAsync.MakeGenericMethod(elementType);
+            var task = (Task)gm.Invoke(null, new object[] { query, CancellationToken.None })!;
+            await task.ConfigureAwait(false);
+            return task.GetType().GetProperty("Result")!.GetValue(task)!;
         }
     }
 }
