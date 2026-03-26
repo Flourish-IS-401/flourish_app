@@ -89,6 +89,8 @@ jobs:
             echo "\`$BASE\`"
             echo ""
             echo "Then re-run the **Azure Static Web Apps** workflow so the SPA rebuilds."
+            echo ""
+            echo "For **Safari / incognito** with this API host, add App Setting **Authentication__Jwt__SigningKey** (min 32 random characters) on the Web App."
           } >> "$GITHUB_STEP_SUMMARY"
           echo "VITE_API_URL (set this secret on the repo): $BASE"
           

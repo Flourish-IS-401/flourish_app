@@ -10,15 +10,23 @@ export const getAuth = () => {
     }
 };
 
-export const setAuth = (userType, userId = null) => {
-    localStorage.setItem(
-        AUTH_KEY,
-        JSON.stringify({
-            loggedIn: true,
-            userType,
-            ...(userId != null && userId !== '' ? { userId } : {}),
-        }),
-    );
+/**
+ * @param {object} [opts]
+ * @param {string|null|undefined} [opts.accessToken] — JWT for Safari / strict browsers when cross-site cookies fail. Omit to keep previous token.
+ */
+export const setAuth = (userType, userId = null, opts = {}) => {
+    const prev = getAuth() || {};
+    const hasTokenOpt = Object.prototype.hasOwnProperty.call(opts, 'accessToken');
+    const accessToken = hasTokenOpt ? opts.accessToken : prev.accessToken;
+    const payload = { loggedIn: true, userType };
+    if (userId != null && userId !== '') payload.userId = userId;
+    if (accessToken) payload.accessToken = accessToken;
+    localStorage.setItem(AUTH_KEY, JSON.stringify(payload));
+};
+
+export const getAccessToken = () => {
+    const auth = getAuth();
+    return auth?.accessToken ?? null;
 };
 
 export const clearAuth = () => {

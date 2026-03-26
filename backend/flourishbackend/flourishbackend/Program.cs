@@ -1,7 +1,12 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using flourishbackend;
 using flourishbackend.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,21 +40,78 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 var useCrossSiteCookies = builder.Configuration.GetValue<bool?>("Auth:UseCrossSiteCookies")
     ?? (builder.Environment.IsProduction() || onAzureAppService);
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
+// JWT bearer: Safari / strict incognito often block cross-site cookies between SWA and Web App.
+// Cookie-first when flourish_auth exists so normal Chrome keeps working if a stored Bearer expires first.
+const string flourishAuthScheme = "FlourishAuth";
+var jwtKey = builder.Configuration["Authentication:Jwt:SigningKey"]?.Trim();
+var jwtEnabled = false;
+if (string.IsNullOrEmpty(jwtKey))
+{
+    if (builder.Environment.IsDevelopment())
     {
-        options.Cookie.Name = "flourish_auth";
-        options.Cookie.HttpOnly = true;
-        options.Cookie.SameSite = useCrossSiteCookies ? SameSiteMode.None : SameSiteMode.Lax;
-        options.Cookie.SecurePolicy = useCrossSiteCookies ? CookieSecurePolicy.Always : CookieSecurePolicy.SameAsRequest;
-        options.ExpireTimeSpan = TimeSpan.FromDays(14);
-        options.SlidingExpiration = true;
-        options.Events.OnRedirectToLogin = ctx =>
+        jwtKey = "local-dev-only-flourish-jwt-signing-key-32!!";
+        jwtEnabled = true;
+    }
+    else if (onAzureAppService)
+    {
+        Console.WriteLine(
+            "[Flourish] WARNING: Set Authentication__Jwt__SigningKey (min 32 chars) on the Web App. " +
+            "Without it, Safari and strict/incognito cannot stay logged in with a separate API host.");
+    }
+}
+else
+{
+    jwtEnabled = true;
+}
+
+if (jwtEnabled)
+{
+    if (string.IsNullOrEmpty(jwtKey) || jwtKey.Length < 32)
+        throw new InvalidOperationException("Authentication:Jwt:SigningKey must be at least 32 characters.");
+
+    builder.Services.AddSingleton<IFlourishAccessTokenIssuer>(_ => new FlourishAccessTokenIssuer(jwtKey));
+
+    builder.Services.AddAuthentication(options =>
         {
-            ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            return Task.CompletedTask;
-        };
-    });
+            options.DefaultScheme = flourishAuthScheme;
+            options.DefaultAuthenticateScheme = flourishAuthScheme;
+            options.DefaultChallengeScheme = flourishAuthScheme;
+        })
+        .AddPolicyScheme(flourishAuthScheme, null, ps =>
+        {
+            ps.ForwardDefaultSelector = ctx =>
+            {
+                if (ctx.Request.Cookies.ContainsKey("flourish_auth"))
+                    return CookieAuthenticationDefaults.AuthenticationScheme;
+                var auth = ctx.Request.Headers.Authorization.ToString();
+                if (!string.IsNullOrEmpty(auth) && auth.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                    return JwtBearerDefaults.AuthenticationScheme;
+                return CookieAuthenticationDefaults.AuthenticationScheme;
+            };
+        })
+        .AddCookie(options => Program.ConfigureFlourishCookieOptions(options, useCrossSiteCookies))
+        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+                ValidIssuer = "Flourish",
+                ValidAudience = "Flourish",
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.FromMinutes(2),
+            };
+        });
+}
+else
+{
+    builder.Services.AddSingleton<IFlourishAccessTokenIssuer, NullFlourishAccessTokenIssuer>();
+
+    builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie(options => Program.ConfigureFlourishCookieOptions(options, useCrossSiteCookies));
+}
 
 builder.Services.AddAuthorization();
 
@@ -129,6 +191,21 @@ app.Run();
 
 public partial class Program
 {
+    internal static void ConfigureFlourishCookieOptions(CookieAuthenticationOptions options, bool useCrossSiteCookies)
+    {
+        options.Cookie.Name = "flourish_auth";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = useCrossSiteCookies ? SameSiteMode.None : SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = useCrossSiteCookies ? CookieSecurePolicy.Always : CookieSecurePolicy.SameAsRequest;
+        options.ExpireTimeSpan = TimeSpan.FromDays(14);
+        options.SlidingExpiration = true;
+        options.Events.OnRedirectToLogin = ctx =>
+        {
+            ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+        };
+    }
+
     internal static HashSet<string> BuildCorsAllowedOrigins(IConfiguration configuration, IHostEnvironment environment)
     {
         var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

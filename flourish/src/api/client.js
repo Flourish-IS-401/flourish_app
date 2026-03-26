@@ -5,6 +5,8 @@
  * - Separate API host (e.g. Azure Web App): set VITE_API_URL to the API root including `/api`, e.g.
  *   https://your-app.azurewebsites.net/api
  */
+import { clearAuth, getAccessToken } from '@/lib/auth';
+
 const configuredBase = import.meta.env.VITE_API_URL;
 const APP_ID = import.meta.env.VITE_APP_ID || 'flourish';
 
@@ -26,9 +28,11 @@ function isPublicPath(pathname) {
 
 export async function apiFetch(endpoint, options = {}) {
     const url = resolveApiUrl(endpoint);
+    const token = getAccessToken();
     const response = await fetch(url, {
         headers: {
             'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
             ...(options.headers || {}),
         },
         credentials: 'include',
@@ -37,7 +41,7 @@ export async function apiFetch(endpoint, options = {}) {
 
     if (response.status === 401) {
         try {
-            localStorage.removeItem('flourish_auth');
+            clearAuth();
         } catch {
             /* ignore */
         }

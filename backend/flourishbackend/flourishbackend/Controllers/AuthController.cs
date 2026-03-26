@@ -15,10 +15,12 @@ namespace flourishbackend.Controllers
     public class AuthController : ControllerBase
     {
         private readonly FlourishDbContext _context;
+        private readonly IFlourishAccessTokenIssuer _accessTokens;
 
-        public AuthController(FlourishDbContext context)
+        public AuthController(FlourishDbContext context, IFlourishAccessTokenIssuer accessTokens)
         {
             _context = context;
+            _accessTokens = accessTokens;
         }
 
         [AllowAnonymous]
@@ -42,10 +44,13 @@ namespace flourishbackend.Controllers
 
             await HttpContext.SignInFlourishUserAsync(_context, user.UserId);
 
+            var userType = isPartner ? "partner" : "mother";
+            var accessToken = _accessTokens.CreateAccessToken(user.UserId, userType);
             return Ok(new
             {
                 user_id = user.UserId,
-                user_type = isPartner ? "partner" : "mother",
+                user_type = userType,
+                access_token = accessToken,
             });
         }
 
