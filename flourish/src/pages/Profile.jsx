@@ -71,16 +71,16 @@ export default function Profile() {
             <ProfileHeader profile={profileData} />
 
             <Tabs defaultValue="personal" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 bg-white rounded-2xl p-1 shadow-sm">
+                <TabsList className="flex h-auto w-full gap-2 p-1 bg-[#E8E4F3]/50 rounded-2xl">
                     <TabsTrigger
                         value="personal"
-                        className="rounded-xl data-[state=active]:bg-[#E8E4F3] data-[state=active]:text-[#5A4B70]"
+                        className="flex-1 rounded-xl py-2.5 text-sm font-medium text-[#5A4B70] transition-all data-[state=active]:bg-white data-[state=active]:text-[#4A4458] data-[state=active]:shadow-sm data-[state=inactive]:shadow-none"
                     >
                         Personal Info
                     </TabsTrigger>
                     <TabsTrigger
                         value="settings"
-                        className="rounded-xl data-[state=active]:bg-[#E8E4F3] data-[state=active]:text-[#5A4B70]"
+                        className="flex-1 rounded-xl py-2.5 text-sm font-medium text-[#5A4B70] transition-all data-[state=active]:bg-white data-[state=active]:text-[#4A4458] data-[state=active]:shadow-sm data-[state=inactive]:shadow-none"
                     >
                         Settings
                     </TabsTrigger>
