@@ -60,12 +60,22 @@ app.UseCors("FlourishCors");
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<FlourishDbContext>();
+
+    // Make sure DB + tables exist
     db.Database.Migrate();
-    DevUserSeed.EnsureDevUser(db);
-    DevUserSeed.EnsureSecondTestUser(db);
-    DevUserSeed.EnsureDevUserEmail(db);
-    DevUserSeed.EnsureSecondTestUserEmail(db);
-    DevUserSeed.EnsureDevBabyProfile(db);
+
+    // Only add user if it doesn't already exist
+    if (!db.UserProfiles.Any(u => u.Email == "test2@flourish.local"))
+    {
+        db.UserProfiles.Add(new UserProfile
+        {
+            UserId = Guid.NewGuid(), // adjust if your PK is named differently
+            Email = "test2@flourish.local",
+            Password = "dev" // IMPORTANT: match your login logic
+        });
+
+        db.SaveChanges();
+    }
 }
 
 if (app.Environment.IsDevelopment())
