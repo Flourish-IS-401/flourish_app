@@ -8,7 +8,7 @@ const navItems = [
 { name: 'Baby', icon: Baby, page: 'Baby' },
 { name: 'Calendar', icon: Calendar, page: 'Calendar' },
 { name: 'Resources', icon: Library, page: 'Resources' },
-{ name: 'Profile', icon: User, page: 'Profile' },
+{ name: 'Account', icon: User, page: 'Profile' },
 ];
 
 // App-wide shell that wraps each routed page and renders the bottom navigation bar.
