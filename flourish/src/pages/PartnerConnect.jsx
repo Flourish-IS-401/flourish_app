@@ -39,7 +39,8 @@
         },
         onSuccess: (data) => {
         const uid = data?.user_id ?? data?.userId;
-        setAuth('mother', uid);
+        const accessToken = data?.access_token ?? data?.accessToken;
+        setAuth('mother', uid, accessToken ? { accessToken } : {});
         navigate(createPageUrl('PartnerHome'));
         },
         onError: (error) => {

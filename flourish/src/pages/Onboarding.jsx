@@ -82,7 +82,8 @@ export default function Onboarding() {
         mutationFn: async (profileData) => createUserProfile(profileData),
         onSuccess: (created) => {
             const uid = created?.user_id ?? created?.userId;
-            setAuth('mother', uid);
+            const accessToken = created?.access_token ?? created?.accessToken;
+            setAuth('mother', uid, accessToken ? { accessToken } : {});
             setCurrentStep(steps.length - 1);
         },
     });
@@ -112,7 +113,8 @@ export default function Onboarding() {
         },
         onSuccess: (profile) => {
             const uid = profile?.user_id ?? profile?.userId;
-            setAuth('partner', uid);
+            const accessToken = profile?.access_token ?? profile?.accessToken;
+            setAuth('partner', uid, accessToken ? { accessToken } : {});
             navigate(createPageUrl('PartnerHome'));
         },
         onError: () => {
@@ -130,7 +132,8 @@ export default function Onboarding() {
             const data = await response.json();
             const ut = data.user_type ?? data.userType;
             const uid = data.user_id ?? data.userId;
-            setAuth(ut, uid);
+            const accessToken = data.access_token ?? data.accessToken;
+            setAuth(ut, uid, accessToken ? { accessToken } : {});
             if (ut === 'partner') {
                 navigate(createPageUrl('PartnerHome'));
             } else {

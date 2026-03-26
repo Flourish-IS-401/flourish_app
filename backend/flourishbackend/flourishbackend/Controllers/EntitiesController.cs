@@ -4,6 +4,7 @@ using System.Reflection;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,7 @@ namespace flourishbackend.Controllers
     public class EntitiesController : ControllerBase
     {
         private readonly FlourishDbContext _context;
+        private readonly IFlourishAccessTokenIssuer _accessTokens;
 
         // Map frontend entity names to DbContext property names
         private static readonly Dictionary<string, string> EntityMap = new(StringComparer.OrdinalIgnoreCase)
@@ -72,9 +74,10 @@ namespace flourishbackend.Controllers
             "SupportProfile",
         };
 
-        public EntitiesController(FlourishDbContext context)
+        public EntitiesController(FlourishDbContext context, IFlourishAccessTokenIssuer accessTokens)
         {
             _context = context;
+            _accessTokens = accessTokens;
         }
 
         private UnauthorizedObjectResult? RequireAuthenticated()
@@ -268,8 +271,18 @@ namespace flourishbackend.Controllers
             _context.Add(entity);
             await _context.SaveChangesAsync();
 
-            if (entity is Flourish.Models.UserProfile createdProfile)
+            if (entity is UserProfile createdProfile)
+            {
                 await HttpContext.SignInFlourishUserAsync(_context, createdProfile.UserId);
+                var isPartner = await _context.SupportProfiles.AsNoTracking()
+                    .AnyAsync(s => s.UserId == createdProfile.UserId);
+                var userType = isPartner ? "partner" : "mother";
+                var accessToken = _accessTokens.CreateAccessToken(createdProfile.UserId, userType);
+                var node = JsonSerializer.SerializeToNode(entity, _jsonOptions);
+                if (node is JsonObject jo && accessToken != null)
+                    jo["access_token"] = accessToken;
+                return JsonContent(node!.ToJsonString(), StatusCodes.Status201Created);
+            }
 
             var json = JsonSerializer.Serialize(entity, _jsonOptions);
             return JsonContent(json, StatusCodes.Status201Created);
