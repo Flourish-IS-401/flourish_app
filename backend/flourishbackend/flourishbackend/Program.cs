@@ -1,9 +1,26 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using flourishbackend.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var onAzureAppService = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME"));
+
+// Persist auth ticket keys across restarts (and align instances if you scale out + shared storage).
+// Without this, Linux App Service can rotate keys and every cookie becomes invalid → 401 on /auth/me.
+if (onAzureAppService)
+{
+    var home = Environment.GetEnvironmentVariable("HOME")
+        ?? (OperatingSystem.IsWindows() ? Environment.GetEnvironmentVariable("USERPROFILE") : null)
+        ?? "/home";
+    var keysDir = Path.Combine(home, "ASP.NET", "DataProtection-Keys");
+    Directory.CreateDirectory(keysDir);
+    builder.Services.AddDataProtection()
+        .SetApplicationName("flourishbackend")
+        .PersistKeysToFileSystem(new DirectoryInfo(keysDir));
+}
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -12,10 +29,11 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownProxies.Clear();
 });
 
-// Production: cross-site cookies (Static Web App + separate API, or any HTTPS SPA on another origin).
+// Production / Azure: SameSite=None + Secure so the SPA on *.azurestaticapps.net can POST login and send cookies on /api/*.
+// If this is false on App Service, browsers reject Set-Cookie on cross-origin fetch → login JSON succeeds but /me is always 401.
 // Development: Lax + SameAsRequest for localhost Vite proxy.
 var useCrossSiteCookies = builder.Configuration.GetValue<bool?>("Auth:UseCrossSiteCookies")
-    ?? builder.Environment.IsProduction();
+    ?? (builder.Environment.IsProduction() || onAzureAppService);
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
