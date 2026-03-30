@@ -8,6 +8,7 @@ import { journalEntryCreatedAt, journalEntryId } from '@/lib/journalEntryFields'
 import { ArrowLeft, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { Input } from '@/components/ui/input';
+import { APP_SHELL_MAX_WIDTH_CLASS } from '@/utils';
 
 export default function PartnerJournalView() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -65,7 +66,7 @@ export default function PartnerJournalView() {
 
     return (
         <div className="min-h-screen bg-[#FEF9F5] pb-8">
-            <div className="max-w-lg mx-auto px-4 pt-6">
+            <div className={`${APP_SHELL_MAX_WIDTH_CLASS} px-4 pt-6`}>
                 <button
                     type="button"
                     onClick={() => window.history.back()}

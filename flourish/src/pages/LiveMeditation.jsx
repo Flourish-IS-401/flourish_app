@@ -1,6 +1,6 @@
     import React, { useState, useEffect } from 'react';
     import { useNavigate } from 'react-router-dom';
-    import { createPageUrl } from '@/utils';
+    import { APP_NARROW_MAX_WIDTH_CLASS, createPageUrl } from '@/utils';
     import { useQuery, useQueryClient } from '@tanstack/react-query';
     import {
         listSavedResources,
@@ -126,11 +126,11 @@
             {type} Meditation
             </h1>
 
-            <p className="text-center text-[#4A4458] leading-relaxed max-w-md mb-8 px-4">
+            <p className={`text-center text-[#4A4458] leading-relaxed ${APP_NARROW_MAX_WIDTH_CLASS} mb-8 px-4`}>
             {meditationContent[type]}
             </p>
 
-            <div className="w-full max-w-md px-8">
+            <div className={`${APP_NARROW_MAX_WIDTH_CLASS} px-8`}>
             <div className="mb-4">
                 <div className="w-full h-2 bg-white/30 rounded-full overflow-hidden">
                 <div 

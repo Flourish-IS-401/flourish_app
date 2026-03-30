@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
+import { APP_SHELL_MAX_WIDTH_CLASS, createPageUrl } from '@/utils';
 import WelcomeStep from '@/components/onboarding/WelcomeStep';
 
 /**
@@ -12,7 +12,7 @@ export default function Welcome() {
     return (
         <div className="min-h-screen bg-[#FEF9F5] flex flex-col">
             <div className="flex-1 flex items-center justify-center px-4">
-                <div className="w-full max-w-lg">
+                <div className={`w-full ${APP_SHELL_MAX_WIDTH_CLASS}`}>
                     <WelcomeStep
                         onNext={() =>
                             navigate(createPageUrl('Onboarding'), {

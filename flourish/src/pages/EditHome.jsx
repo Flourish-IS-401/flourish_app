@@ -9,6 +9,7 @@ import {
     USER_PROFILES_QUERY_KEY,
 } from '@/api/userProfileApi';
 import { getUserId } from '@/lib/auth';
+import { APP_SHELL_MAX_WIDTH_CLASS } from '@/utils';
 import HomeCustomization from '@/components/profile/HomeCustomization';
 
 export default function EditHome() {
@@ -61,7 +62,7 @@ export default function EditHome() {
 
     return (
         <div className="min-h-screen bg-[#FEF9F5] p-6 pb-24">
-            <div className="max-w-lg mx-auto">
+            <div className={APP_SHELL_MAX_WIDTH_CLASS}>
                 <button
                     type="button"
                     onClick={() => navigate(-1)}

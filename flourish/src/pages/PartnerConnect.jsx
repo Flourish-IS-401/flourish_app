@@ -1,6 +1,6 @@
     import React, { useState } from 'react';
     import { useNavigate } from 'react-router-dom';
-    import { createPageUrl } from '@/utils';
+    import { APP_NARROW_MAX_WIDTH_CLASS, createPageUrl } from '@/utils';
     import { createUserProfile } from '@/api/userProfileApi';
     import { setAuth } from '@/lib/auth';
     import { ArrowLeft, Link2, Loader2 } from 'lucide-react';
@@ -63,7 +63,7 @@
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#FEF9F5] via-[#F5EEF8] to-[#E8E4F3] flex flex-col">
         <div className="flex-1 flex items-center justify-center px-4 py-8">
-            <div className="w-full max-w-md">
+            <div className={APP_NARROW_MAX_WIDTH_CLASS}>
             {/* Back Button */}
             <button
                 onClick={() => navigate(createPageUrl('Welcome'))}
