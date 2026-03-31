@@ -2,7 +2,7 @@
 
 ## App Summary
 
-Flourish is a wellness and parenting app that helps users track their mood, keep a journal, log baby activities (feeding, naps, mood), and coordinate support with a partner. The primary user is a parent (often a new parent) who wants one place to check in emotionally, record moments, manage baby routines, and request or offer support. The product combines mood check-ins, journal prompts, affirmations, baby tracking (feeding, sleep, mood), a support widget for partner requests, and optional meditations and articles. The frontend was generated from Base44 and can run against a local Postgres-backed API so you own the data and backend.
+Flourish is a wellness and parenting app that helps users track their mood, keep a journal, log baby activities (feeding, naps, mood), and coordinate support with a partner. The primary user is a parent (often a new parent) who wants one place to check in emotionally, record moments, manage baby routines, and request or offer support. The product combines mood check-ins, journal prompts, affirmations, baby tracking (feeding, sleep, mood), a support widget for partner requests, and optional meditations and articles. The frontend was generated from Base44 and can run against a local SQLite-backed API so you own the data and backend.
 
 ## EARS Requirements
 
@@ -13,7 +13,7 @@ Flourish is a wellness and parenting app that helps users track their mood, keep
 4. The system shall provide access to resources for users.  
 5. When a user selects a meditation guide, the system shall play a guided postpartum meditation session.  
 6. When a user enters a journal entry, the system shall save the entry and associate it with the current date.  
-7. When a user logs their mood, the system shall record the mood entry and update the user’s mood history.  
+7. When a user logs their mood, the system shall record the mood entry and update the user's mood history.  
 8. When a user selects a daily affirmation, the system shall display an affirmation relevant to postpartum emotional well-being.  
 9. While a meditation session is in progress, the system shall display playback controls and session progress.  
 10. While the user is journaling, the system shall display guided prompts to support reflection.  
@@ -22,6 +22,8 @@ Flourish is a wellness and parenting app that helps users track their mood, keep
 13. The system shall provide an onboarding process for new users.
 14. The system shall give users access to the meditation catalog.  
 
+### Not Completed Requirements
+1. When a user completes a meditation session, the system shall prompt the user to reflect or journal about their experience.
 
 ## Tech Stack
 
@@ -40,8 +42,8 @@ flowchart LR
   User[User]
   Browser[Browser]
   Vite[Vite Dev Server]
-  API[Express API]
-  DB[(PostgreSQL)]
+  API[ASP.NET API]
+  DB[(SQLite)]
 
   User -->|"1. Open app"| Browser
   Browser -->|"2. Request /api/*"| Vite
@@ -66,10 +68,6 @@ Install and verify the following before setup:
 | Software | Purpose | Install | Verify |
 |----------|---------|---------|--------|
 | **Node.js** (v18 or later) | Run frontend and backend | [nodejs.org](https://nodejs.org/) | `node -v` and `npm -v` |
-| **PostgreSQL** | Database for the backend | [postgresql.org](https://www.postgresql.org/download/) | `psql -V` |
-| **psql** (in PATH) | Run schema/seed or debug DB | Included with PostgreSQL | `psql --version` |
-
-Ensure `psql` is on your system PATH so you can run `createdb` and `psql $DATABASE_URL -f seed.sql` from the project.
 
 ## Installation and Setup
 
@@ -79,29 +77,29 @@ Ensure `psql` is on your system PATH so you can run `createdb` and `psql $DATABA
    ```
 
 2. **Backend: restore/build**
-  ```bash
-  cd backend/flourishbackend/flourishbackend
-  dotnet restore
-  dotnet build
-  ```
+   ```bash
+   cd backend/flourishbackend/flourishbackend
+   dotnet restore
+   dotnet build
+   ```
 
 3. **Database**
-  The ASP.NET backend uses SQLite and will auto-create the DB/tables on startup (see `Program.cs`).
+   The ASP.NET backend uses SQLite and will auto-create the DB/tables on startup (see `Program.cs`).
 
-6. **Frontend: install dependencies**
+4. **Frontend: install dependencies**
    ```bash
    cd ../flourish
    npm install
    ```
 
-7. **Frontend: environment**
+5. **Frontend: environment**
    Create or edit `flourish/.env` (or `flourish/.env.local`) with:
    ```env
-  # Used by some Base44 SDK flows; API requests are proxied by Vite.
-  VITE_BASE44_APP_BASE_URL=http://localhost:4000
+   # Used by some Base44 SDK flows; API requests are proxied by Vite.
+   VITE_BASE44_APP_BASE_URL=http://localhost:4000
    VITE_BASE44_APP_ID=your_app_id
    ```
-  This aligns the frontend with your local ASP.NET backend (default `http://localhost:4000`).
+   This aligns the frontend with your local ASP.NET backend (default `http://localhost:4000`).
 
 ## Running the Application
 
@@ -131,15 +129,14 @@ Confirm that a full flow works: UI → API → database → persistence after re
 2. **Confirm the database was updated**  
    In a new terminal:
    ```bash
-   psql $DATABASE_URL -c "SELECT id, created_date, data FROM mood_entry ORDER BY created_date DESC LIMIT 3;"
+   sqlite3 backend/flourishbackend/flourishbackend/BeatsMe.sqlite "SELECT id, created_date, data FROM mood_entry ORDER BY created_date DESC LIMIT 3;"
    ```
-   (If `DATABASE_URL` is not set, use e.g. `psql postgresql://localhost:5432/flourish -c "SELECT ..."`.)  
-   You should see a new row with your `mood_value` and today’s `date` in `data`.
+   You should see a new row with your mood value and today's date.
 
 3. **Verify persistence**  
    Refresh the browser (F5 or Cmd+R). The mood entry should still appear (e.g. on Home or Calendar). The new row remains in the database and is loaded again by the API.
 
 This end-to-end path (UI → Vite proxy → ASP.NET → SQLite → response → UI and refresh) confirms the vertical slice is working.
 
-##Deploying
+## Deploying
 With the CI/CD pipeline in place, each push to the main branch will automatically be deployed to production.
