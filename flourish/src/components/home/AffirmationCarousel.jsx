@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { listAffirmations } from '@/api/affirmationApi';
 import {
     createAffirmationReaction,
+    deleteAffirmationReaction,
     listAffirmationReactions,
     updateAffirmationReaction,
 } from '@/api/affirmationReactionApi';
@@ -116,9 +117,14 @@ export default function AffirmationCarousel() {
 
         try {
             if (existingReaction) {
-                await updateAffirmationReaction(reactionRowId(existingReaction), {
-                    reaction: type,
-                });
+                // Toggle off if clicking the same reaction again
+                if (existingReaction.reaction === type) {
+                    await deleteAffirmationReaction(reactionRowId(existingReaction));
+                } else {
+                    await updateAffirmationReaction(reactionRowId(existingReaction), {
+                        reaction: type,
+                    });
+                }
             } else {
                 await createAffirmationReaction({
                     affirmation_id: affId,
@@ -130,7 +136,7 @@ export default function AffirmationCarousel() {
             await queryClient.invalidateQueries({ queryKey: ['affirmationReactions'] });
 
             // If they thumbs-down the current affirmation, move away from it
-            if (type === 'down') {
+            if (type === 'down' && (!existingReaction || existingReaction.reaction !== 'down')) {
                 setDirection(1);
                 setCurrentIndex(0);
             }

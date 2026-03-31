@@ -16,6 +16,10 @@ export default function PersonalInfoSection({
 }) {
 const [showRemoveDialog, setShowRemoveDialog] = useState(false);
 
+const firstName = profile?.user_first_name ?? profile?.userFirstName ?? '';
+const lastName = profile?.user_last_name ?? profile?.userLastName ?? '';
+const email = profile?.email ?? profile?.Email ?? user?.email ?? '';
+
 const handleRemoveSupport = () => {
   onUpdate({
     support_type: '',
@@ -39,20 +43,33 @@ return (
       
       <div className="space-y-4">
         <div>
-        <Label className="text-sm text-[#5A4B70] mb-1.5">Full Name</Label>
-        <Input 
-            value={user?.full_name || ''} 
-            disabled
-            className="bg-[#F5EEF8]/50 border-[#E8E4F3]"
+        <Label className="text-sm text-[#5A4B70] mb-1.5">First Name</Label>
+        <Input
+            value={firstName}
+            onChange={(e) => onUpdate({ user_first_name: e.target.value })}
+            placeholder="Enter first name"
+            className="border-[#E8E4F3] focus:border-[#8B7A9F]"
+          />
+        </div>
+
+        <div>
+        <Label className="text-sm text-[#5A4B70] mb-1.5">Last Name</Label>
+        <Input
+            value={lastName}
+            onChange={(e) => onUpdate({ user_last_name: e.target.value })}
+            placeholder="Enter last name"
+            className="border-[#E8E4F3] focus:border-[#8B7A9F]"
           />
         </div>
         
         <div>
         <Label className="text-sm text-[#5A4B70] mb-1.5">Email</Label>
         <Input 
-            value={user?.email || ''} 
-            disabled
-            className="bg-[#F5EEF8]/50 border-[#E8E4F3]"
+            type="email"
+            value={email || ''}
+            onChange={(e) => onUpdate({ email: e.target.value })}
+            placeholder="Enter email"
+            className="border-[#E8E4F3] focus:border-[#8B7A9F]"
           />
         </div>
         

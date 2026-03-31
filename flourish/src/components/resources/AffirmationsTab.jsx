@@ -6,7 +6,12 @@ import {
     updateAffirmation,
     deleteAffirmation,
 } from '@/api/affirmationApi';
-import { createAffirmationReaction } from '@/api/affirmationReactionApi';
+import {
+    createAffirmationReaction,
+    deleteAffirmationReaction,
+    listAffirmationReactions,
+    updateAffirmationReaction,
+} from '@/api/affirmationReactionApi';
 import { getUserId } from '@/lib/auth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -15,45 +20,50 @@ import { Search, ThumbsUp, ThumbsDown, Plus, Trash2, Edit } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DeleteConfirmationDialog from '@/components/ui/delete-confirmation-dialog';
 
-const defaultAffirmations = [
-{ id: 1, text: "I am exactly who my baby needs.", is_default: true },
-{ id: 2, text: "Rest is productive right now.", is_default: true },
-{ id: 3, text: "I can be grateful and overwhelmed at the same time.", is_default: true },
-{ id: 4, text: "Asking for help is strength.", is_default: true },
-{ id: 5, text: "My best is enough today.", is_default: true },
-{ id: 6, text: "I am learning alongside my baby.", is_default: true },
-{ id: 7, text: "This moment will pass, and I will be okay.", is_default: true },
-{ id: 8, text: "I deserve rest and care too.", is_default: true },
-];
+function affirmationId(affirmation) {
+    return affirmation.affirmation_id ?? affirmation.affirmationId ?? affirmation.id;
+}
+
+function reactionRowId(row) {
+    return row.affirmation_reaction_id ?? row.affirmationReactionId ?? row.id;
+}
 
 export default function AffirmationsTab() {
 const [searchQuery, setSearchQuery] = useState('');
 const [showAddForm, setShowAddForm] = useState(false);
 const [newAffirmation, setNewAffirmation] = useState('');
-const [reactions, setReactions] = useState({});
 const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 const [editingId, setEditingId] = useState(null);
 const [editText, setEditText] = useState('');
 const queryClient = useQueryClient();
+const userId = getUserId();
 
-const { data: customAffirmations = [] } = useQuery({
-queryKey: ['customAffirmations'],
+const { data: affirmationsFromDb = [] } = useQuery({
+queryKey: ['affirmations'],
 queryFn: () => listAffirmations({ limit: 200 }),
 });
 
-const allAffirmations = [
-...defaultAffirmations,
-...customAffirmations.map((a) => ({
-    ...a,
-    id: a.affirmation_id ?? a.AffirmationId ?? a.id,
-    is_default: false,
-})),
-];
+const { data: reactionRows = [] } = useQuery({
+queryKey: ['affirmationReactions', userId],
+queryFn: () =>
+    listAffirmationReactions({
+    filter: { user_id: userId },
+    }),
+enabled: Boolean(userId),
+});
 
-const filteredAffirmations = allAffirmations.filter(a => {
+const reactionMap = reactionRows.reduce((acc, row) => {
+    const aid = row.affirmation_id ?? row.affirmationId;
+    if (!aid) return acc;
+    // Keep the first one we see for each affirmation (good enough for a simple UI).
+    if (!acc[aid]) acc[aid] = row;
+    return acc;
+}, {});
+
+const filteredAffirmations = affirmationsFromDb.filter(a => {
 const matchesSearch = a.text.toLowerCase().includes(searchQuery.toLowerCase());
-const key = `${a.is_default ? 'default' : 'custom'}_${a.id}`;
-const hasFavoriteReaction = reactions[key] === 'up';
+const existing = reactionMap[affirmationId(a)];
+const hasFavoriteReaction = existing?.reaction === 'up';
 const matchesFavorites = !showFavoritesOnly || hasFavoriteReaction;
 return matchesSearch && matchesFavorites;
 });
@@ -61,25 +71,32 @@ return matchesSearch && matchesFavorites;
 const handleAddAffirmation = async () => {
 if (!newAffirmation.trim()) return;
 await createAffirmation({ text: newAffirmation });
-queryClient.invalidateQueries({ queryKey: ['customAffirmations'] });
+queryClient.invalidateQueries({ queryKey: ['affirmations'] });
 setNewAffirmation('');
 setShowAddForm(false);
 };
 
 const handleReaction = async (affirmation, type) => {
-const key = `${affirmation.is_default ? 'default' : 'custom'}_${affirmation.id}`;
-setReactions(prev => ({ ...prev, [key]: type }));
+    if (!userId) return;
+    const affId = affirmationId(affirmation);
+    const existing = reactionMap[affId];
 
-if (!affirmation.is_default) {
-    const uid = getUserId();
-    if (uid) {
-    await createAffirmationReaction({
-    affirmation_id: affirmation.id,
-    reaction: type,
-    user_id: uid,
-    });
+    if (existing) {
+        // Toggle off if clicking the same reaction again
+        if (existing.reaction === type) {
+            await deleteAffirmationReaction(reactionRowId(existing));
+        } else {
+            await updateAffirmationReaction(reactionRowId(existing), { reaction: type });
+        }
+    } else {
+        await createAffirmationReaction({
+            affirmation_id: affId,
+            reaction: type,
+            user_id: userId,
+        });
     }
-}
+
+    await queryClient.invalidateQueries({ queryKey: ['affirmationReactions', userId] });
 };
 
 const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null });
@@ -87,7 +104,7 @@ const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null });
 const handleDelete = async () => {
 try {
     await deleteAffirmation(deleteDialog.id);
-    queryClient.invalidateQueries({ queryKey: ['customAffirmations'] });
+    queryClient.invalidateQueries({ queryKey: ['affirmations'] });
 } catch (error) {
     console.error('Error deleting affirmation:', error);
 }
@@ -102,7 +119,7 @@ setEditText(affirmation.text);
 const handleSaveEdit = async () => {
 if (!editText.trim()) return;
 await updateAffirmation(editingId, { text: editText });
-queryClient.invalidateQueries({ queryKey: ['customAffirmations'] });
+queryClient.invalidateQueries({ queryKey: ['affirmations'] });
 setEditingId(null);
 setEditText('');
 };
@@ -181,9 +198,9 @@ return (
 
     <div className="space-y-3">
     {filteredAffirmations.map((affirmation) => {
-        const key = `${affirmation.is_default ? 'default' : 'custom'}_${affirmation.id}`;
-        const reaction = reactions[key];
-        const isEditing = editingId === affirmation.id;
+        const key = affirmationId(affirmation);
+        const reaction = reactionMap[key]?.reaction;
+        const isEditing = editingId === key;
         return (
         <motion.div
             key={key}
@@ -246,22 +263,20 @@ return (
                     <ThumbsDown className="w-4 h-4" />
                     </motion.button>
                 </div>
-                {!affirmation.is_default && (
-                    <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => handleEdit(affirmation)}
-                        className="p-2 rounded-xl bg-[#E8E4F3] text-[#8B7A9F] hover:bg-[#DDD8EB] transition-all"
-                    >
-                        <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                        onClick={() => setDeleteDialog({ open: true, id: affirmation.id })}
-                        className="p-2 rounded-xl bg-[#F5E6EA] text-[#8B4A4A] hover:bg-[#F0DAE0] transition-all"
-                    >
-                        <Trash2 className="w-4 h-4" />
-                    </button>
-                    </div>
-                )}
+                <div className="flex items-center gap-2">
+                <button
+                    onClick={() => handleEdit({ ...affirmation, id: key })}
+                    className="p-2 rounded-xl bg-[#E8E4F3] text-[#8B7A9F] hover:bg-[#DDD8EB] transition-all"
+                >
+                    <Edit className="w-4 h-4" />
+                </button>
+                <button
+                    onClick={() => setDeleteDialog({ open: true, id: key })}
+                    className="p-2 rounded-xl bg-[#F5E6EA] text-[#8B4A4A] hover:bg-[#F0DAE0] transition-all"
+                >
+                    <Trash2 className="w-4 h-4" />
+                </button>
+                </div>
                 </div>
             </>
             )}

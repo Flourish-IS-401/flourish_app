@@ -129,4 +129,137 @@ public static class DevUserSeed
 
         db.SaveChanges();
     }
+
+    public static void EnsureDevAffirmations(FlourishDbContext db)
+    {
+        // Seed once (by exact text match) so local dev stays stable across restarts.
+        var texts = GetDevAffirmationTexts();
+        var existing = db.Affirmations.AsNoTracking()
+            .Where(a => texts.Contains(a.Text))
+            .Select(a => a.Text)
+            .ToHashSet(StringComparer.Ordinal);
+
+        var toAdd = texts
+            .Where(t => !existing.Contains(t))
+            .Select(t => new Affirmation { Text = t })
+            .ToList();
+
+        if (toAdd.Count == 0) return;
+        db.Affirmations.AddRange(toAdd);
+        db.SaveChanges();
+    }
+
+    public static void EnsureDevAffirmationReactions(FlourishDbContext db)
+    {
+        // Requires affirmations to exist.
+        var affirmations = db.Affirmations.AsNoTracking()
+            .OrderBy(a => a.Text)
+            .Take(10)
+            .ToList();
+        if (affirmations.Count == 0) return;
+
+        // Seed only if the dev user has no reactions yet (keep it simple + idempotent).
+        if (db.AffirmationReactions.AsNoTracking().Any(r => r.UserId == DevUserId))
+            return;
+
+        var picks = affirmations.Take(5).ToList();
+        var reactions = new[]
+        {
+            "up","up","up","down","up"
+        };
+
+        var toAdd = picks.Select((a, i) => new AffirmationReaction
+        {
+            AffirmationId = a.AffirmationId,
+            UserId = DevUserId,
+            Reaction = reactions[i]
+        }).ToList();
+
+        db.AffirmationReactions.AddRange(toAdd);
+        db.SaveChanges();
+    }
+
+    public static void EnsureDevJournalEntries(FlourishDbContext db)
+    {
+        if (db.JournalEntries.AsNoTracking().Any(j => j.UserId == DevUserId))
+            return;
+
+        var now = DateTime.UtcNow;
+        db.JournalEntries.AddRange(
+            new JournalEntry
+            {
+                UserId = DevUserId,
+                CreatedDate = now.AddDays(-2),
+                Prompt = "What’s one small win from today?",
+                Content = "I took a short walk and felt a little more grounded afterward.",
+                ShareWithPartner = false
+            },
+            new JournalEntry
+            {
+                UserId = DevUserId,
+                CreatedDate = now.AddDays(-1),
+                Prompt = "What do you need more of this week?",
+                Content = "More rest, more water, and asking for help sooner instead of pushing through.",
+                ShareWithPartner = true
+            }
+        );
+
+        db.SaveChanges();
+    }
+
+    public static void EnsureDevMoodEntries(FlourishDbContext db)
+    {
+        // Ensure 14 entries across 14 distinct days for the dev user.
+        var existingDates = db.MoodEntries.AsNoTracking()
+            .Where(m => m.UserId == DevUserId)
+            .Select(m => m.Date)
+            .ToHashSet(StringComparer.Ordinal);
+
+        var toAdd = new List<MoodEntry>();
+        var today = DateTime.UtcNow.Date;
+        for (var i = 0; i < 14; i++)
+        {
+            var day = today.AddDays(-i);
+            var date = day.ToString("yyyy-MM-dd");
+            if (existingDates.Contains(date))
+                continue;
+
+            // A simple repeating pattern so charts look interesting.
+            var moodValue = 45 + (i * 4 % 45); // 45..89
+            var label = moodValue switch
+            {
+                >= 80 => "Great",
+                >= 65 => "Good",
+                >= 50 => "Okay",
+                _ => "Low"
+            };
+
+            toAdd.Add(new MoodEntry
+            {
+                UserId = DevUserId,
+                Date = date,
+                Time = "09:00",
+                MoodValue = moodValue,
+                MoodLabel = label
+            });
+        }
+
+        if (toAdd.Count == 0) return;
+        db.MoodEntries.AddRange(toAdd);
+        db.SaveChanges();
+    }
+
+    private static HashSet<string> GetDevAffirmationTexts() => new(StringComparer.Ordinal)
+    {
+        "I am doing my best, and that is enough.",
+        "Small steps still move me forward.",
+        "I can handle what comes next.",
+        "I give myself permission to rest.",
+        "My feelings are valid, and they will pass.",
+        "I am learning as I go.",
+        "I deserve support and kindness.",
+        "I trust myself to make good decisions.",
+        "I can start again at any moment.",
+        "Today, I will focus on what I can control."
+    };
 }
