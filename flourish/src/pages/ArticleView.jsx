@@ -1,6 +1,6 @@
     import React from 'react';
     import { useNavigate } from 'react-router-dom';
-    import { createPageUrl } from '@/utils';
+    import { APP_ARTICLE_MAX_WIDTH_CLASS, createPageUrl } from '@/utils';
     import { ArrowLeft, Bookmark } from 'lucide-react';
     import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
     import {
@@ -400,7 +400,7 @@
     return (
         <div className="min-h-screen bg-[#FEF9F5] pb-24">
         <div className="sticky top-0 bg-white/90 backdrop-blur-lg border-b border-[#E8E4F3]/50 p-4 z-10">
-            <div className="max-w-2xl mx-auto flex justify-between items-center">
+            <div className={`${APP_ARTICLE_MAX_WIDTH_CLASS} flex justify-between items-center`}>
             <button
                 onClick={() => {
                 if (fromTab === 'home') {
@@ -426,7 +426,7 @@
             </div>
         </div>
 
-        <div className="max-w-2xl mx-auto px-4 py-8">
+        <div className={`${APP_ARTICLE_MAX_WIDTH_CLASS} px-4 py-8`}>
             <div className="mb-4">
             <span className="text-xs font-medium text-[#8B7A9F] uppercase tracking-wide bg-[#F5EEF8] px-3 py-1 rounded-full">
                 {article.category}

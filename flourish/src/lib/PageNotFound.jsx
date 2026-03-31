@@ -1,5 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { isLoggedIn } from '@/lib/auth';
+import { APP_NARROW_MAX_WIDTH_CLASS } from '@/utils';
 
 export default function PageNotFound() {
     const location = useLocation();
@@ -8,7 +9,7 @@ export default function PageNotFound() {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
-            <div className="max-w-md w-full">
+            <div className={APP_NARROW_MAX_WIDTH_CLASS}>
                 <div className="text-center space-y-6">
                     <div className="space-y-2">
                         <h1 className="text-7xl font-light text-slate-300">404</h1>

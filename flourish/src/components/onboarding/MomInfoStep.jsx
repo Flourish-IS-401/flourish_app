@@ -4,8 +4,7 @@ import { Input } from '@/components/ui/input';
 import { ArrowLeft } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 
-export default function MomInfoStep({ data, onNext, onBack }) {
-    const [formData, setFormData] = useState({
+export default function MomInfoStep({ data, onNext, onBack, isLoading }) {    const [formData, setFormData] = useState({
         full_name: data.full_name || '',
         email: data.email || '',
         phone_number: data.phone_number || '',
@@ -148,12 +147,12 @@ export default function MomInfoStep({ data, onNext, onBack }) {
                         className="rounded-xl border-[#E8E4F3] focus:border-[#8B7A9F]"
                     />
                 </div>
-
                 <Button
                     type="submit"
-                    className="w-full h-12 bg-[#7D6F99] hover:bg-[#7A6A8F] text-white rounded-2xl text-base mt-2"
+                    disabled={isLoading}
+                    className="w-full h-12 bg-[#7D6F99] hover:bg-[#7A6A8F] text-white rounded-2xl text-base mt-2 disabled:opacity-50"
                 >
-                    Continue
+                    {isLoading ? 'Creating account...' : 'Continue'}
                 </Button>
             </form>
         </div>

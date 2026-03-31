@@ -174,6 +174,11 @@ using (var scope = app.Services.CreateScope())
     DevUserSeed.EnsureDevUserEmail(db);
     DevUserSeed.EnsureSecondTestUserEmail(db);
     DevUserSeed.EnsureDevBabyProfile(db);
+    DevUserSeed.EnsureDevAffirmations(db);
+    DevUserSeed.EnsureDevAffirmationReactions(db);
+    DevUserSeed.EnsureDevJournalEntries(db);
+    DevUserSeed.EnsureDevMoodEntries(db);
+    DevUserSeed.EnsureDemoUsers(db);
 }
 
 if (app.Environment.IsDevelopment())
