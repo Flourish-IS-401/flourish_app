@@ -1,0 +1,5 @@
+
+# SQLite dev database files
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
